@@ -48,13 +48,13 @@
 #include <dt-bindings/input/input.h>
 
 / {
-	model = "MxqPro4K";
+	model = "MxqPro4k";
 	compatible = "sunvell,mxqpro4k", "allwinner,sun8i-h3";
 
 	aliases {
 		serial0 = &uart0;
 		ethernet0 = &emac;
-		ethernet1 = &xr819;
+		ethernet1 = &xr819; 
 	};
 
 	cec {
@@ -68,7 +68,6 @@
 	};
 
 	connector {
-		compatible = "hdmi-connector";
 		type = "a";
 
 		port {
@@ -83,12 +82,12 @@
 
 		led-0 {
 			label = "beelink-x2:blue:pwr";
-			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>; /* PL10 */
+			gpios = <&r_pio 0 10 GPIO_ACTIVE_LOW>; 
 			default-state = "on";
-			linux,default-trigger = "heartbeat";
+			linux,default-trigger = "netdev";
+		
 		};
-
- 
+		
 	};
 
 	gpio-keys {
@@ -121,11 +120,17 @@
 	};
 
 	wifi_pwrseq: wifi_pwrseq {
-		compatible = "mmc-pwrseq-simple";
-		reset-gpios = <&r_pio 0 7 GPIO_ACTIVE_LOW>; /* PL7 */
-		clocks = <&rtc CLK_OSC32K_FANOUT>;
-		clock-names = "ext_clock";
+   		 compatible = "mmc-pwrseq-simple";
+    		/* WLAN_EN : GPIO 352 = PL0 */
+    		/* WLAN_REG_ON : GPIO 359 = PL7 */
+    		reset-gpios =   <&r_pio 0 0 GPIO_ACTIVE_LOW>, /* PL0 */
+                  		<&r_pio 0 7 GPIO_ACTIVE_HIGH>; /* PL7 */
+                    /* Le lien avec l'horloge que vous avez vue dans le log */
+        	clocks = <&rtc CLK_OSC32K_FANOUT>;    	
+    		clock-names = "ext_clock";
+    		post-power-on-delay-ms = <500>;
 	};
+	
 };
 
 &de {
@@ -181,7 +186,11 @@
 	bus-width = <4>;
 	non-removable;
 	status = "okay";
-
+ 
+    	max-frequency = <20000000>;
+    	keep-power-in-suspend;
+    	cap-sdio-powersave;
+    	post-power-on-delay-ms = <500>;
 	xr819: sdio_wifi@1 {
 		reg = <1>;
 		compatible = "xradio,xr819";
@@ -191,6 +200,44 @@
 	};
 };
 
+&uart1 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
+    uart-has-rtscts;
+    status = "okay";
+
+    bluetooth {
+        compatible = "xradio,xr819-bt";
+        
+        /* PL1 (0x86, banque 0, pin 1) */
+        /* Testez GPIO_ACTIVE_HIGH si le BT ne s'allume pas */
+        reset-gpios = <&r_pio 0 1 GPIO_ACTIVE_LOW>;
+    
+        /* PA12 (0x5e, banque 0, pin 12) */
+        device-wake-gpios = <&pio 0 12 GPIO_ACTIVE_HIGH>;
+        
+        /* PL6 (0x86, banque 0, pin 6) */
+        host-wake-gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>;
+
+        /* L'horloge 32kHz est aussi nécessaire pour le Bluetooth */
+        clocks = <&rtc CLK_OSC32K_FANOUT>;
+        clock-names = "lpo";
+                
+        /* Interruption HostWake (optionnel selon le pilote) */
+        interrupt-parent = <&r_pio>;
+        interrupts = <0 6 IRQ_TYPE_EDGE_RISING>; /* PL6 */
+    };
+};
+
+&mmc2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc2_8bit_pins>;
+	vmmc-supply = <&reg_vcc3v3>;
+	bus-width = <8>;
+	non-removable;
+	cap-mmc-hw-reset;
+	status = "okay";
+};
 
 &ohci0 {
 	status = "okay";
@@ -200,7 +247,9 @@
 	status = "okay";
 };
 
-
+&ths {
+    status = "okay";
+};
 
 &spdif {
 	pinctrl-names = "default";

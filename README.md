@@ -78,3 +78,11 @@ cp "${USERPATCHES_PATH}/mxqpro4k.tvb" "${SRC}/config/boards/mxqpro4k.tvb"
 ou en specifiant les parametres sur la ligne du compile.sh
 ./compile.sh BOARD=mxqpro4k BRANCH=current RELEASE=noble KERNEL_CONFIGURE=no
 
+6 MODIFICATION ET RELANCEMENT DE LA COMPILATION
+-------------------------------------------------------------------
+
+apres modification dans et push vers mon-depot..
+dans repertoir build, avant de recompiler faire:
+git submodule update --remote --merge
+
+
