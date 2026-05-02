@@ -8,7 +8,8 @@ MODULES_BLACKLIST="lima, cpufreq_dt zram raid6_pq 842_decompress 842_compress"
 DEFAULT_OVERLAYS="usbhost1 usbhost2"
 BOOTCONFIG="mxqpro4k_defconfig"
 KERNEL_TARGET="current,edge,legacy"
-KERNEL_TEST_TARGET="current"
+KERNEL_TEST_TARGET="edge"
 BOOT_FDT_FILE="allwinner/sun8i-h3-mxqpro4k.dtb"
 BOOTDELAY=5
+BOOT_LOGO="yes"
 
