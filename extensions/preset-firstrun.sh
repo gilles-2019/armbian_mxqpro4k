@@ -10,8 +10,8 @@ function post_family_tweaks__preset_configs() {
 
 	#Enter your WiFi creds
 	#      SECURITY WARN: Your wifi keys will be stored in plaintext, no encryption.
-	echo "PRESET_NET_WIFI_SSID='GoofyNet'" >> "${SDCARD}"/root/.not_logged_in_yet
-	echo "PRESET_NET_WIFI_KEY='micmacmelange1'" >> "${SDCARD}"/root/.not_logged_in_yet
+	echo "PRESET_NET_WIFI_SSID='my-ssid'" >> "${SDCARD}"/root/.not_logged_in_yet
+	echo "PRESET_NET_WIFI_KEY='wifi-passwd'" >> "${SDCARD}"/root/.not_logged_in_yet
 
 	#      Country code to enable power ratings and channels for your country. eg: GB US DE | https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 	echo "PRESET_NET_WIFI_COUNTRYCODE='CA'" >> "${SDCARD}"/root/.not_logged_in_yet
