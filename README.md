@@ -26,7 +26,7 @@ mkdir -p kernel/archive/sunxi-6.18
 mkdir -p u-boot/u-boot-sunxi/defconfig
 mkdir -p u-boot/u-boot-sunxi/dt
 
-# Ajoutez vos fichiers (mxqpro4k.conf, lib.config, patches...)
+# Ajoutez vos fichiers (mxqpro4k.tvb, lib.config, patches...)
 # Puis publiez sur votre serveur distant :
 git add .
 git commit -m "Initialisation config mxqpro4k"
@@ -36,7 +36,7 @@ git push -u origin main
 2. INTEGRATION DANS LE DEPOT ARMBIAN (PARENT)
 ----------------------------------------------
 # clone depot-armbian
-git clone depth=1 git@github.com:armbian/build.git
+git clone https://github.com/armbian/build.git
 
 # Allez à la racine du dépôt Armbian cloné
 cd /chemin/vers/armbian/build
@@ -52,16 +52,16 @@ git commit -m "Liaison du depot enfant userpatches"
 3. LIEN POUR LE FICHIER BOARD (L'ETAPE CRUCIALE)
 ------------------------------------------------
 # Armbian doit voir le fichier board dans son dossier interne avant le build
-ln -sf ../userpatches/mxqpro4k.conf config/boards/mxqpro4k.conf
+cp userpatches/mxqpro4k.tvb config/boards/mxqpro4k.tvb
 
 4. CONTENU DU FICHIER userpatches/lib.config
 ---------------------------------------------
 # Assurez-vous que votre fichier userpatches/lib.config contient cette ligne :
-cp "${USERPATCHES_PATH}/mxqpro4k.conf" "${SRC}/config/boards/mxqpro4k.conf"
+cp "${USERPATCHES_PATH}/mxqpro4k.tvb" "${SRC}/config/boards/mxqpro4k.tvb"
 
 5. LANCEMENT DE LA COMPILATION
 ------------------------------
-(le fichier config-mxqpro4k.conf existe pour passer les parametres)
+(le fichier config-mxqpro4k.tvb existe pour passer les parametres)
 ./compile.sh mxqpro4k
 ou en specifiant les parametres sur la ligne du compile.sh
 ./compile.sh BOARD=mxqpro4k BRANCH=current RELEASE=noble KERNEL_CONFIGURE=no

@@ -1,0 +1,275 @@
+/*
+ * Copyright (C) 2017 Marcus Cooper <codekipper@gmail.com>
+ *
+ * This file is dual-licensed: you can use it either under the terms
+ * of the GPL or the X11 license, at your option. Note that this dual
+ * licensing only applies to this file, and not this project as a
+ * whole.
+ *
+ *  a) This file is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU General Public License as
+ *     published by the Free Software Foundation; either version 2 of the
+ *     License, or (at your option) any later version.
+ *
+ *     This file is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ * Or, alternatively,
+ *
+ *  b) Permission is hereby granted, free of charge, to any person
+ *     obtaining a copy of this software and associated documentation
+ *     files (the "Software"), to deal in the Software without
+ *     restriction, including without limitation the rights to use,
+ *     copy, modify, merge, publish, distribute, sublicense, and/or
+ *     sell copies of the Software, and to permit persons to whom the
+ *     Software is furnished to do so, subject to the following
+ *     conditions:
+ *
+ *     The above copyright notice and this permission notice shall be
+ *     included in all copies or substantial portions of the Software.
+ *
+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ *     OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/dts-v1/;
+#include "sun8i-h3.dtsi"
+#include "sunxi-common-regulators.dtsi"
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+/ {
+	model = "MxqPro4k";
+	compatible = "sunvell,mxqpro4k", "allwinner,sun8i-h3";
+
+	aliases {
+		serial0 = &uart0;
+		ethernet0 = &emac;
+		ethernet1 = &xr819; 
+	};
+
+	cec {
+		compatible = "cec-gpio";
+		cec-gpios = <&pio 0 14 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>; /* PA14 */
+		hdmi-phandle = <&hdmi>;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	connector {
+		type = "a";
+
+		port {
+			hdmi_con_in: endpoint {
+				remote-endpoint = <&hdmi_out_con>;
+			};
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led-0 {
+			label = "beelink-x2:blue:pwr";
+			gpios = <&r_pio 0 10 GPIO_ACTIVE_LOW>; 
+			default-state = "on";
+			linux,default-trigger = "netdev";
+		
+		};
+		
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+
+		key-power {
+			label = "power";
+			linux,code = <KEY_POWER>;
+			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>;
+			wakeup-source;
+		};
+	};
+
+	sound_spdif {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "On-board SPDIF";
+
+		simple-audio-card,cpu {
+			sound-dai = <&spdif>;
+		};
+
+		simple-audio-card,codec {
+			sound-dai = <&spdif_out>;
+		};
+	};
+
+	spdif_out: spdif-out {
+		#sound-dai-cells = <0>;
+		compatible = "linux,spdif-dit";
+	};
+
+	wifi_pwrseq: wifi_pwrseq {
+   		 compatible = "mmc-pwrseq-simple";
+    		/* WLAN_EN : GPIO 352 = PL0 */
+    		/* WLAN_REG_ON : GPIO 359 = PL7 */
+    		reset-gpios =   <&r_pio 0 0 GPIO_ACTIVE_LOW>, /* PL0 */
+                  		<&r_pio 0 7 GPIO_ACTIVE_HIGH>; /* PL7 */
+                    /* Le lien avec l'horloge que vous avez vue dans le log */
+        	clocks = <&rtc CLK_OSC32K_FANOUT>;    	
+    		clock-names = "ext_clock";
+    		post-power-on-delay-ms = <500>;
+	};
+	
+};
+
+&de {
+	status = "okay";
+};
+
+&ehci0 {
+	status = "okay";
+};
+
+&ehci1 {
+	status = "okay";
+};
+
+&emac {
+	phy-handle = <&int_mii_phy>;
+	phy-mode = "mii";
+	allwinner,leds-active-low;
+	status = "okay";
+};
+
+&hdmi {
+	status = "okay";
+};
+
+&hdmi_out {
+	hdmi_out_con: endpoint {
+		remote-endpoint = <&hdmi_con_in>;
+	};
+};
+
+&ir {
+	linux,rc-map-name = "rc-tanix-tx3mini";
+	pinctrl-names = "default";
+	pinctrl-0 = <&r_ir_rx_pin>;
+	status = "okay";
+};
+
+&mmc0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc0_pins>;
+	vmmc-supply = <&reg_vcc3v3>;
+	bus-width = <4>;
+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>;
+	cd-inverted;
+	status = "okay";
+};
+
+&mmc1 {
+	vmmc-supply = <&reg_vcc3v3>;
+	vqmmc-supply = <&reg_vcc3v3>;
+	mmc-pwrseq = <&wifi_pwrseq>;
+	bus-width = <4>;
+	non-removable;
+	status = "okay";
+ 
+    	max-frequency = <20000000>;
+    	keep-power-in-suspend;
+    	cap-sdio-powersave;
+    	post-power-on-delay-ms = <500>;
+	xr819: sdio_wifi@1 {
+		reg = <1>;
+		compatible = "xradio,xr819";
+		interrupt-parent = <&pio>;
+		interrupts = <0 11 IRQ_TYPE_EDGE_RISING>;
+		interrupt-names = "host-wake";
+	};
+};
+
+&uart1 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
+    uart-has-rtscts;
+    status = "okay";
+
+    bluetooth {
+        compatible = "xradio,xr819-bt";
+        
+        /* PL1 (0x86, banque 0, pin 1) */
+        /* Testez GPIO_ACTIVE_HIGH si le BT ne s'allume pas */
+        reset-gpios = <&r_pio 0 1 GPIO_ACTIVE_LOW>;
+    
+        /* PA12 (0x5e, banque 0, pin 12) */
+        device-wake-gpios = <&pio 0 12 GPIO_ACTIVE_HIGH>;
+        
+        /* PL6 (0x86, banque 0, pin 6) */
+        host-wake-gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>;
+
+        /* L'horloge 32kHz est aussi nécessaire pour le Bluetooth */
+        clocks = <&rtc CLK_OSC32K_FANOUT>;
+        clock-names = "lpo";
+                
+        /* Interruption HostWake (optionnel selon le pilote) */
+        interrupt-parent = <&r_pio>;
+        interrupts = <0 6 IRQ_TYPE_EDGE_RISING>; /* PL6 */
+    };
+};
+
+&mmc2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc2_8bit_pins>;
+	vmmc-supply = <&reg_vcc3v3>;
+	bus-width = <8>;
+	non-removable;
+	cap-mmc-hw-reset;
+	status = "okay";
+};
+
+&ohci0 {
+	status = "okay";
+};
+
+&ohci1 {
+	status = "okay";
+};
+
+&ths {
+    status = "okay";
+};
+
+&spdif {
+	pinctrl-names = "default";
+	pinctrl-0 = <&spdif_tx_pin>;
+	status = "okay";
+};
+
+&uart0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart0_pa_pins>;
+	status = "okay";
+};
+
+&usb_otg {
+	dr_mode = "peripheral";
+	status = "okay";
+};
+
+&usbphy {
+
+	status = "okay";
+	usb0_id_det-gpios = <&pio 0 7 GPIO_ACTIVE_HIGH>; 
+};
