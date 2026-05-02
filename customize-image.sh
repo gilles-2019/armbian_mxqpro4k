@@ -35,6 +35,67 @@ Main() {
 		focal)
 			# your code here
 			;;
+		noble)
+			# your code here
+			# 1. Importer les variables depuis l'overlay
+			if [ -f /tmp/overlay/image_env.sh ]; then
+    				source /tmp/overlay/image_env.sh
+			fi
+
+			# 2. Configurer le mot de passe ROOT
+			# Supprime le flag qui force le changement de mot de passe au premier boot
+			rm -f /root/.not_logged_in_yet
+			echo -e "$ROOT_PWD\n$ROOT_PWD" | passwd root
+
+			# 3. Configurer le Wi-Fi (via NetworkManager)
+			# On crée un fichier de connexion système pour que le Wi-Fi soit actif dès le boot
+			if [ -n "$WIFI_SSID" ]; then
+			echo "Configure wifi-ssid for armbian with: ${WIFI_SSID}"
+cat <<EOF > /etc/NetworkManager/system-connections/default-wifi.nmconnection
+[connection]
+id=default-wifi
+type=wifi
+autoconnect=true
+
+[wifi]
+mode=infrastructure
+ssid=$WIFI_SSID
+
+[wifi-security]
+auth-alg=open
+key-mgmt=wpa-psk
+psk=$WIFI_PWD
+
+[ipv4]
+method=auto
+
+[ipv6]
+addr-gen-mode=stable-privacy
+method=auto
+EOF
+    			chmod 600 /etc/NetworkManager/system-connections/default-wifi.nmconnection
+			fi
+# --- Configuration via Armbian LED Service ---
+
+# 1. Créer le fichier de configuration (écrase le défaut s'il existe)
+# Remplacez 'votre_led' par le nom réel de votre LED (ex: green:net)
+cat <<EOF > /etc/armbian-leds.conf
+[/sys/class/leds/beelink-x2:blue:pwr]
+trigger=netdev
+device_name=wlan0
+link=1
+rx=1
+tx=1
+interval=52
+EOF
+
+# 2. Charger le module netdev au démarrage (nécessaire pour que le service trouve le trigger)
+echo "ledtrig-netdev" >> /etc/modules
+
+# 3. Activer le service pour qu'il se lance automatiquement
+systemctl enable armbian-led-state
+
+			;;
 	esac
 } # Main
 
