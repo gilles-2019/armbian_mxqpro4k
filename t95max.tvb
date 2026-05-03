@@ -1,6 +1,10 @@
 # t95max tvbox Amlogic s905x3 4gigRam 32Gig emmc SoC WiFi eMMC
-BOARD_NAME="t95max"
-BOARD_VENDOR="turewell"
+#BOARD_NAME="t95max"
+BOARD_NAME="Odroid C4"
+
+#BOARD_VENDOR="turewell"
+BOARD_VENDOR="hardkernel"
+
 BOARDFAMILY="meson-sm1"
 BOARD_MAINTAINER="Gilles"
 INTRODUCED="2020"
@@ -9,7 +13,7 @@ BOOT_FIP_TYPE="odroidc4"
 MODULES_BLACKLIST="simpledrm" # SimpleDRM conflicts with Panfrost
 KERNEL_TARGET="current,edge,legacy"
 KERNEL_TEST_TARGET="edge"
-BOOT_FDT_FILE="meson-sm1-x96-max-plus-100m.dtb"
+BOOT_FDT_FILE="amlogic/meson-sm1-x96-max-plus-100m.dtb"
 BOOTDELAY=5
 BOOT_LOGO="desktop"
 
