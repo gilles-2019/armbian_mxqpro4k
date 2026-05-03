@@ -62,33 +62,23 @@ Main() {
 			echo -e "\e[1;32m[ info ]\e[0m blacklist modules: cpufreq_dt"
 			echo "blacklist cpufreq_dt" >> /etc/modprobe.d/blacklist.conf
 			
-			# 3. Configurer le Wi-Fi (via NetworkManager)
+			# 3. Configurer le Wi-Fi (via netplan)
 			# On crée un fichier de connexion système pour que le Wi-Fi soit actif dès le boot
 			if [ -n "$WIFI_SSID" ]; then
 			echo "Configure wifi-ssid for armbian with: ${WIFI_SSID}"
 			# Ensure the directory exists first
-			mkdir -p /etc/NetworkManager/system-connections/
-cat <<EOF > /etc/NetworkManager/system-connections/default-wifi.nmconnection
-[connection]
-id=default-wifi
-type=wifi
-autoconnect=true
-
-[wifi]
-mode=infrastructure
-ssid=$WIFI_SSID
-
-[wifi-security]
-auth-alg=open
-key-mgmt=wpa-psk
-psk=$WIFI_PWD
-
-[ipv4]
-method=auto
-
-[ipv6]
-addr-gen-mode=stable-privacy
-method=auto
+			mkdir -p /etc/netplan
+cat <<EOF > /etc/netplan/20-wired-wifi.yaml
+network:
+  version: 2
+  renderer: networkd # NetworkManager Ou 'networkd' sur les images minimales
+  wifis:
+    wlan0:
+      dhcp4: yes
+      access-points:
+        "$WIFI_SSID":
+          password: "$WIFI_PWD"
+          
 EOF
     			chmod 600 /etc/NetworkManager/system-connections/default-wifi.nmconnection
 			fi
@@ -111,6 +101,8 @@ echo "ledtrig-netdev" >> /etc/modules
 
 # 3. Activer le service pour qu'il se lance automatiquement
 systemctl enable armbian-led-state
+
+# 4. Ajouter des packages
 
 			;;
 	esac
