@@ -83,11 +83,18 @@ EOF
     			chmod 600 /etc/NetworkManager/system-connections/default-wifi.nmconnection
 			fi
 # --- Configuration via Armbian LED Service ---
-
+# le nom pour leds selon le board
+	if [ "${BOARD}" = "odroidc4" ]; then
+		#a determiner pour amlogic s905x3
+		export LED_PATH="/sys/class/leds/beelink-x2:blue:pwr"
+	else
+		#defaut pour mxqpro4k
+		export LED_PATH="/sys/class/leds/beelink-x2:blue:pwr"
+	fi
 # 1. Créer le fichier de configuration (écrase le défaut s'il existe)
 # Remplacez 'votre_led' par le nom réel de votre LED (ex: green:net)
 cat <<EOF > /etc/armbian-leds.conf
-[/sys/class/leds/beelink-x2:blue:pwr]
+[$LED_PATH]
 trigger=netdev
 device_name=wlan0
 link=1
