@@ -1,9 +1,9 @@
 # t95max tvbox Amlogic s905x3 4gigRam 32Gig emmc SoC WiFi eMMC
-#BOARD_NAME="t95max"
-BOARD_NAME="Odroid C4"
+BOARD_NAME="t95max"
+#BOARD_NAME="Odroid C4"
 
-#BOARD_VENDOR="turewell"
-BOARD_VENDOR="hardkernel"
+BOARD_VENDOR="turewell"
+#BOARD_VENDOR="hardkernel"
 
 BOARDFAMILY="meson-sm1"
 BOARD_MAINTAINER="Gilles"
