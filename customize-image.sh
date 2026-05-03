@@ -39,7 +39,7 @@ Main() {
 			# your code here
 			# 0. Exporter les variables depuis l'overlay
 			if [ -f /tmp/overlay/export_wifi.sh ]; then
-    				source /tmp/overlay/image_env.sh
+    				source /tmp/overlay/export_wifi.sh
     			else
     				echo -e "\e[1;32m[ info ]\e[0m MISSING OVERLAY FILE export_wifi.sh"
  				echo -e "\e[1;32m[      ]\e[0m WILL USE ENVIRONMENT VARIABLES "   				
