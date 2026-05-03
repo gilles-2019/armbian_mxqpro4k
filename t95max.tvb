@@ -5,6 +5,7 @@ BOARDFAMILY="meson-sm1"
 BOARD_MAINTAINER="Gilles"
 INTRODUCED="2020"
 BOOTCONFIG="odroid-c4_defconfig"
+BOOT_FIP_TYPE="odroidc4"
 MODULES_BLACKLIST="simpledrm" # SimpleDRM conflicts with Panfrost
 KERNEL_TARGET="current,edge,legacy"
 KERNEL_TEST_TARGET="edge"
