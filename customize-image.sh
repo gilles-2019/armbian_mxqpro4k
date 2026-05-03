@@ -37,16 +37,30 @@ Main() {
 			;;
 		noble)
 			# your code here
+			# 0. Exporter les variables depuis l'overlay
+			if [ -f /tmp/overlay/export_wifi.sh ]; then
+    				source /tmp/overlay/image_env.sh
+    			else
+    				echo -e "\e[1;32m[ info ]\e[0m MISSING OVERLAY FILE export_wifi.sh"
+ 				echo -e "\e[1;32m[      ]\e[0m WILL USE ENVIRONMENT VARIABLES "   				
+			fi
+		
 			# 1. Importer les variables depuis l'overlay
 			if [ -f /tmp/overlay/image_env.sh ]; then
     				source /tmp/overlay/image_env.sh
+    			else
+    				echo -e "\e[1;32m[ info ]\e[0m MISSING OVERLAY FILE image_env.sh"
 			fi
 
 			# 2. Configurer le mot de passe ROOT
 			# Supprime le flag qui force le changement de mot de passe au premier boot
 			rm -f /root/.not_logged_in_yet
 			echo -e "$ROOT_PWD\n$ROOT_PWD" | passwd root
-
+			
+			# 2B. blacklist modules
+			echo -e "\e[1;32m[ info ]\e[0m blacklist modules: cpufreq_dt"
+			echo "blacklist cpufreq_dt" >> /etc/modprobe.d/blacklist.conf
+			
 			# 3. Configurer le Wi-Fi (via NetworkManager)
 			# On crée un fichier de connexion système pour que le Wi-Fi soit actif dès le boot
 			if [ -n "$WIFI_SSID" ]; then
