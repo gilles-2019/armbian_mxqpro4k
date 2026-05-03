@@ -96,14 +96,15 @@ tx=1
 interval=52
 EOF
 
-# 2. Charger le module netdev au démarrage (nécessaire pour que le service trouve le trigger)
-echo "ledtrig-netdev" >> /etc/modules
+			# 2. Charger le module netdev au démarrage 
+			echo "ledtrig-netdev" >> /etc/modules
 
-# 3. Activer le service pour qu'il se lance automatiquement
-systemctl enable armbian-led-state
+			# 3. Activer le service pour qu'il se lance automatiquement
+			systemctl enable armbian-led-state
 
-# 4. Ajouter des packages
-
+			# 4. Ajouter parametres dans armbianEnv
+			sed -i "s/verbosity=1/verbosity=7/" /boot/armbianEnv.txt
+			echo 'earlycon="on"' >> /boot/armbianEnv.txt
 			;;
 	esac
 } # Main
