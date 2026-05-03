@@ -38,11 +38,12 @@ Main() {
 		noble)
 			# your code here
 			# 0. Exporter les variables depuis l'overlay
-			if [ -f /tmp/overlay/export_wifi.sh ]; then
-    				source /tmp/overlay/export_wifi.sh
+			if [ -n "$HOST_WIFI_SSID" ]; then
+				echo -e "\e[1;32m[ info ]\e[0m Exported Root  password: ${HOST_ROOT_PWD}"
+				echo -e "\e[1;32m[ info ]\e[0m Exported host wifi ssid: ${HOST_WIFI_SSID}"
+				echo -e "\e[1;32m[ info ]\e[0m Exported host wifi  pwd: ${HOST_WIFI_PWD}"
     			else
-    				echo -e "\e[1;32m[ info ]\e[0m MISSING OVERLAY FILE export_wifi.sh"
- 				echo -e "\e[1;32m[      ]\e[0m WILL USE ENVIRONMENT VARIABLES "   				
+ 				echo -e "\e[1;32m[ERR] \e[0m MISSING HOST_WIFI_SSID ENVIRONMENT VARIABLES"   				
 			fi
 		
 			# 1. Importer les variables depuis l'overlay
