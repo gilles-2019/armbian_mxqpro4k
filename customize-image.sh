@@ -66,6 +66,8 @@ Main() {
 			# On crée un fichier de connexion système pour que le Wi-Fi soit actif dès le boot
 			if [ -n "$WIFI_SSID" ]; then
 			echo "Configure wifi-ssid for armbian with: ${WIFI_SSID}"
+			# Ensure the directory exists first
+			mkdir -p /etc/NetworkManager/system-connections/
 cat <<EOF > /etc/NetworkManager/system-connections/default-wifi.nmconnection
 [connection]
 id=default-wifi
