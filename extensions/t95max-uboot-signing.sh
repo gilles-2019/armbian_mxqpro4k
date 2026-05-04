@@ -8,7 +8,7 @@ function t95max_sign_uboot_fip() {
 
     display_alert "Extension" "Signature FIP pour S905X3..." "info"
 
-    local fip_tools="userpatches/amlogic-boot-fip"
+    local fip_tools="./userpatches/amlogic-boot-fip"
     local raw_uboot="$OBJ/u-boot/u-boot.bin"
     local output_dir="$OBJ/u-boot"
  
