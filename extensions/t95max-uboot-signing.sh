@@ -12,7 +12,7 @@ function t95max_sign_uboot_fip() {
     local raw_uboot="$OBJ/u-boot/u-boot.bin"
     local output_dir="$OBJ/u-boot"
  
-     display_alert "Extension" "repertoire OBJ=<$OBJ> UBOOT_OUT=<$UBOOT_OUT> DEST=<$DEST>" "info"
+    display_alert "Extension" "repertoire OBJ=<$OBJ> UBOOT_OUT=<$UBOOT_OUT> DEST=<$DEST>" "info"
      
     # Récupération des outils si nécessaire
     if [ ! -d "$fip_tools" ]; then
@@ -34,7 +34,7 @@ function t95max_sign_uboot_fip() {
     ./build-fip.sh sei610 "$raw_uboot" "$output_dir"
     
     # Préparation du chainloader pour la partition /boot
-    display_alert "Extension" "Préparation du chainloader...$output_dir/u-boot.bin.sd.bin VERS $SDCARD/u-boot.ext " "info"
+    display_alert "Extension" "chainloader...$output_dir/u-boot.bin.sd.bin VERS $SDCARD/u-boot.ext " "info"
     cp "$output_dir/u-boot.bin.sd.bin" "$SDCARD/u-boot.ext" 2>/dev/null || true
 
     display_alert "Extension" "Signature terminée : u-boot.bin.sd.bin généré" "success"
@@ -50,7 +50,7 @@ if  type add_hook >/dev/null 2>&1; then
     add_hook "post_build_uboot" "t95max_sign_uboot_fip"
 else
     # Si add_hook n'est pas là, on définit la fonction standard en secours
-     display_alert "Extension" "ADD HOOK fonction standard en secours" "info"
-    function uboot_custom_postprocess { t95max_sign_uboot_fip; }
+    display_alert "Extension" "ADD HOOK fonction standard en secours" "info"
+    function uboot_custom_postprocess { t95max_sign_uboot_fip }
 fi
 
