@@ -1,19 +1,22 @@
 # t95max tvbox Amlogic s905x3 4gigRam 32Gig emmc SoC WiFi eMMC
-BOARD_NAME="t95max"
-#BOARD_NAME="Odroid C4"
+BOARD_NAME="T95Max"
+BOARDFAMILY="meson64"
+BOARD_MAINTAINER="Gilles C"
+BOOT_LOGO="yes"
 
-BOARD_VENDOR="turewell"
-#BOARD_VENDOR="hardkernel"
+# Architecture et Noyau
+ARCH="arm64"
+# On utilise le noyau mainline "current" ou "edge"
+KERNEL_TARGET="current,edge"
+FULL_DESKTOP="no"
 
-BOARDFAMILY="meson-sm1"
-BOARD_MAINTAINER="Gilles"
-INTRODUCED="2020"
-BOOTCONFIG="odroid-c4_defconfig"
-BOOT_FIP_TYPE="odroidc4"
-MODULES_BLACKLIST="simpledrm" # SimpleDRM conflicts with Panfrost
-KERNEL_TARGET="current,edge,legacy"
-KERNEL_TEST_TARGET="edge"
-BOOT_FDT_FILE="amlogic/meson-sm1-x96-max-plus-100m.dtb"
-BOOTDELAY=5
-BOOT_LOGO="desktop"
+# Configuration U-Boot spécifique (votre patch defconfig précédent)
+UBOOT_TARGET_MAP="sei610:sei610_defconfig"
+
+# Device Tree par défaut (SM1 SEI610 est le plus compatible)
+DEFAULT_FDT="amlogic/meson-sm1-sei610.dtb"
+
+# Paramètres de boot
+BOOT_SUPPORT_SPI="no"
+
 

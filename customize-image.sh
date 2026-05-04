@@ -18,6 +18,34 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
+    	# 1. On filtre d'abord par famille (Amlogic 64-bit)
+	if [[ "$LINUXFAMILY" == "meson64" ]]; then
+        
+        # 2. On cible spécifiquement le S905X3 via la board ou le SOC
+        # Note : BOARD sera "t95max" si vous suivez les instructions précédentes
+        	if [[ "$BOARD" == "t95max" ]]; then
+            		echo "Customizing for Amlogic S905X3 (T95Max)..."
+            		ConfigureS905X3
+        	fi
+    	fi
+    	if [[ "$BOARD" == "mxqpro4k" ]]; then
+        	# 2B. blacklist modules
+		echo -e "\e[1;32m[ info ]\e[0m blacklist modules: cpufreq_dt"
+		echo "blacklist cpufreq_dt" >> /etc/modprobe.d/blacklist.conf
+    	else
+    		echo -e "\e[1;32m[ info ]\e[0m no blacklist modules for board $BOARD"
+    	fi
+	# SetupLedTrigger a besoin le nom pour leds selon le board
+	if [[ "$BOARD" = "t95max" ]]; then
+		#a determiner pour amlogic s905x3
+		# export LED_PATH="/sys/class/leds/beelink-x2:blue:pwr"
+		echo -e "\e[1;32m[ info ]\e[0m no LED TRIGGER for board $BOARD"
+	else
+		#defaut pour mxqpro4k
+		export LED_PATH="/sys/class/leds/beelink-x2:blue:pwr"
+		echo -e "\e[1;32m[ info ]\e[0m Setup LED TRIGGER board $BOARD - $LED_PATH"
+		SetupLedTrigger
+	fi 		
 	case $RELEASE in
 		stretch)
 			# your code here
@@ -36,14 +64,25 @@ Main() {
 			# your code here
 			;;
 		noble)
-			# your code here
-			# 0. Exporter les variables depuis l'overlay
+			# auto configurer rootpwd, wifi ssid
+			AutoBootSetup
+			
+			# 4. Ajouter parametres dans armbianEnv
+			sed -i "s/verbosity=1/verbosity=7/" /boot/armbianEnv.txt
+			echo 'earlycon="on"' >> /boot/armbianEnv.txt
+			;;
+	esac
+} # Main
+
+AutoBootSetup() {
+	                #importer rootpwd, wifissid et wifipwd depuis var environnment
 			if [ -n "$HOST_WIFI_SSID" ]; then
 				echo -e "\e[1;32m[ info ]\e[0m Exported Root  password: ${HOST_ROOT_PWD}"
 				echo -e "\e[1;32m[ info ]\e[0m Exported host wifi ssid: ${HOST_WIFI_SSID}"
 				echo -e "\e[1;32m[ info ]\e[0m Exported host wifi  pwd: ${HOST_WIFI_PWD}"
     			else
- 				echo -e "\e[1;32m[ERR] \e[0m MISSING HOST_WIFI_SSID ENVIRONMENT VARIABLES"   				
+ 				echo -e "\e[1;32m[ERR] \e[0m MISSING HOST_WIFI_SSID ENVIRONMENT VARIABLES"
+ 				exit 0   				
 			fi
 		
 			# 1. Importer les variables depuis l'overlay
@@ -58,10 +97,7 @@ Main() {
 			rm -f /root/.not_logged_in_yet
 			echo -e "$ROOT_PWD\n$ROOT_PWD" | passwd root
 			
-			# 2B. blacklist modules
-			echo -e "\e[1;32m[ info ]\e[0m blacklist modules: cpufreq_dt"
-			echo "blacklist cpufreq_dt" >> /etc/modprobe.d/blacklist.conf
-			
+
 			# 3. Configurer le Wi-Fi (via netplan)
 			# On crée un fichier de connexion système pour que le Wi-Fi soit actif dès le boot
 			if [ -n "$WIFI_SSID" ]; then
@@ -82,15 +118,11 @@ network:
 EOF
     			chmod 600 /etc/NetworkManager/system-connections/default-wifi.nmconnection
 			fi
+
+}
+SetupLedTrigger() {
 # --- Configuration via Armbian LED Service ---
-# le nom pour leds selon le board
-	if [ "${BOARD}" = "odroidc4" ]; then
-		#a determiner pour amlogic s905x3
-		export LED_PATH="/sys/class/leds/beelink-x2:blue:pwr"
-	else
-		#defaut pour mxqpro4k
-		export LED_PATH="/sys/class/leds/beelink-x2:blue:pwr"
-	fi
+
 # 1. Créer le fichier de configuration (écrase le défaut s'il existe)
 # Remplacez 'votre_led' par le nom réel de votre LED (ex: green:net)
 cat <<EOF > /etc/armbian-leds.conf
@@ -108,13 +140,31 @@ EOF
 
 			# 3. Activer le service pour qu'il se lance automatiquement
 			systemctl enable armbian-led-state
+}
 
-			# 4. Ajouter parametres dans armbianEnv
-			sed -i "s/verbosity=1/verbosity=7/" /boot/armbianEnv.txt
-			echo 'earlycon="on"' >> /boot/armbianEnv.txt
-			;;
-	esac
-} # Main
+
+ConfigureS905X3() {
+    # Installation du chainloader généré par lib.config
+    echo "execute fn ConfigureS905X3 in customize-image.sh"
+    if [ -f /u-boot.ext ]; then
+        echo "Installing u-boot.ext to /boot"
+        cp /u-boot.ext /boot/u-boot.ext
+        rm /u-boot.ext
+    fi
+
+    # Configuration du DTB
+    #if [ -f /boot/armbianEnv.txt ]; then
+    #    echo "Updating DTB to t95max in armbianEnv.txt"
+    #    sed -i '/fdtfile=/d' /boot/armbianEnv.txt
+    #    echo "fdtfile=amlogic/meson-sm1-sei610.dtb" >> /boot/armbianEnv.txt
+    #fi
+    
+    # Exemple d'utilisation de RELEASE ou BUILD_DESKTOP
+    if [[ "$BUILD_DESKTOP" == "yes" ]]; then
+        echo "Optimizing desktop for TV Box..."
+        # Ajoutez ici des réglages GPU ou résolution spécifique
+    fi
+}
 
 InstallOpenMediaVault() {
 	# use this routine to create a Debian based fully functional OpenMediaVault
