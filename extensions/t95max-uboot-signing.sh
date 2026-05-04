@@ -34,7 +34,7 @@ function t95max_sign_uboot_fip() {
     ./build-fip.sh sei610 "$raw_uboot" "$output_dir"
     
     # Préparation du chainloader pour la partition /boot
-    display_alert "Extension" "Préparation du chainloader...$output_dir/u-boot.bin.sd.bin VERS $SDCARD/u-boot.ext " "info
+    display_alert "Extension" "Préparation du chainloader...$output_dir/u-boot.bin.sd.bin VERS $SDCARD/u-boot.ext " "info"
     cp "$output_dir/u-boot.bin.sd.bin" "$SDCARD/u-boot.ext" 2>/dev/null || true
 
     display_alert "Extension" "Signature terminée : u-boot.bin.sd.bin généré" "success"
