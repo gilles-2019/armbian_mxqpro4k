@@ -23,7 +23,7 @@ Main() {
         
         # 2. On cible spécifiquement le S905X3 via la board ou le SOC
         # Note : BOARD sera "t95max" si vous suivez les instructions précédentes
-        	if [[ "$BOARD" == "t95max" ]]; then
+        	if [[ "$BOARD" == "sei610" ]]; then
             		echo "Customizing for Amlogic S905X3 (T95Max)..."
             		ConfigureS905X3
         	fi
@@ -36,7 +36,7 @@ Main() {
     		echo -e "\e[1;32m[ info ]\e[0m no blacklist modules for board $BOARD"
     	fi
 	# SetupLedTrigger a besoin le nom pour leds selon le board
-	if [[ "$BOARD" = "t95max" ]]; then
+	if [[ "$BOARD" = "sei610" ]]; then
 		#a determiner pour amlogic s905x3
 		# export LED_PATH="/sys/class/leds/beelink-x2:blue:pwr"
 		echo -e "\e[1;32m[ info ]\e[0m no LED TRIGGER for board $BOARD"
@@ -153,11 +153,11 @@ ConfigureS905X3() {
     fi
 
     # Configuration du DTB
-    #if [ -f /boot/armbianEnv.txt ]; then
-    #    echo "Updating DTB to t95max in armbianEnv.txt"
-    #    sed -i '/fdtfile=/d' /boot/armbianEnv.txt
-    #    echo "fdtfile=amlogic/meson-sm1-sei610.dtb" >> /boot/armbianEnv.txt
-    #fi
+    if [ -f /boot/armbianEnv.txt ]; then
+        echo "Updating DTB to t95max in armbianEnv.txt"
+        sed -i '/fdtfile=/d' /boot/armbianEnv.txt
+        echo "fdtfile=amlogic/meson-sm1-sei610.dtb" >> /boot/armbianEnv.txt
+    fi
     
     # Exemple d'utilisation de RELEASE ou BUILD_DESKTOP
     if [[ "$BUILD_DESKTOP" == "yes" ]]; then
