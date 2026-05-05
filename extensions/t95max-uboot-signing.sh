@@ -51,6 +51,6 @@ if  type add_hook >/dev/null 2>&1; then
 else
     # Si add_hook n'est pas là, on définit la fonction standard en secours
     display_alert "Extension" "ADD HOOK fonction standard en secours" "info"
-    function uboot_custom_postprocess { t95max_sign_uboot_fip }
+    function uboot_custom_postprocess { t95max_sign_uboot_fip; }
 fi
 
