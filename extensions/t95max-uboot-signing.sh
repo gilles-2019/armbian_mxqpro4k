@@ -1,5 +1,6 @@
 #!/bin/bash
 
+: << 'COMMENTAIRE'
 # Fonction qui contient votre logique de signature FIP
 function t95max_sign_uboot_fip() {
     display_alert "Extension" "FN Signature FIP." "info"
@@ -39,7 +40,65 @@ function t95max_sign_uboot_fip() {
 
     display_alert "Extension" "Signature terminée : u-boot.bin.sd.bin généré" "success"
 }
+COMMENTAIRE
 
+
+function post_build_uboot() {
+    # On ne cible que la board sei610 (chipset SM1 / S905X3)
+    display_alert "Extension" "FN Signature FIP." "info"
+    [[ $BOARD != "sei610" ]] && return
+
+    display_alert "S905X3" "Début de la signature FIP pour chainloader" "info"
+
+    # 1. Définition des chemins
+    local uboot_dir="$(pwd)"
+    local fip_src="$SRC/userpatches/amlogic-boot-fip" # Dossier où vous avez cloné les blobs
+    local board_fip="$fip_src/sei610"
+    local output_bin="$DEST/u-boot.ext"
+
+    # 2. Vérification de la présence des outils et blobs
+    if [ ! -d "$board_fip" ]; then
+        display_alert "S905X3" "Blobs introuvables dans $board_fip" "error"
+        display_alert "Astuce" "git clone https://github.com $fip_src" "info"
+        return 1
+    fi
+
+    # 3. Préparation de l'espace de travail temporaire
+    local tmp_dir="/tmp/fip_sign"
+    mkdir -p "$tmp_dir"
+    cp "$board_fip"/* "$tmp_dir/"
+    cp "$uboot_dir/u-boot.bin" "$tmp_dir/bl33.bin"
+
+    display_alert "S905X3" "Assemblage des composants FIP..." "info"
+    pushd "$tmp_dir" > /dev/null
+
+    # 4. Logique de signature spécifique au S905X3 (SM1)
+    # L'outil fip_create assemble les blobs sécurisés et le u-boot mainline (bl33)
+    ./fip_create \
+        --bl30  bl30.bin \
+        --bl301 bl301.bin \
+        --bl31  bl31.bin \
+        --bl33  bl33.bin \
+        u-boot.bin.fip
+
+    # 5. Injection du header spécifique pour boot SD/eMMC
+    # Cette étape rend le binaire exécutable par le premier bootloader
+    cat bl2.bin u-boot.bin.fip > "$output_bin"
+
+    popd > /dev/null
+
+    # 6. Nettoyage et confirmation
+    if [ -f "$output_bin" ]; then
+        display_alert "S905X3" "Signature réussie : $output_bin" "success"
+        # Nettoyage
+        rm -rf "$tmp_dir"
+    else
+        display_alert "S905X3" "Échec de la signature" "error"
+        return 1
+    fi
+}
+
+: << 'COMMENTAIRE'
 # ENREGISTREMENT DU HOOK
 # Argument 1 : Le point d'ancrage (étape du build)
 # Argument 2 : Le nom de votre fonction ci-dessus
@@ -53,4 +112,5 @@ else
     display_alert "Extension" "ADD HOOK fonction standard en secours" "info"
     function uboot_custom_postprocess { t95max_sign_uboot_fip; }
 fi
+COMMENTAIRE
 
