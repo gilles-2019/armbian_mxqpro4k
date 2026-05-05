@@ -7,12 +7,12 @@ function t95max_sign_uboot_fip() {
     [[ $BOARD != "sei610" && $BOARD != "t95max" ]] && return
 
     display_alert "Extension" "Signature FIP pour S905X3..." "info"
-
+    export OBJ="./cache/sources/u-boot-worktree"
     local fip_tools="./userpatches/amlogic-boot-fip"
-    local raw_uboot="$OBJ/u-boot/u-boot.bin"
+    local raw_uboot="$OBJ/u-boot/V2024.07/u-boot.bin"
     local output_dir="$OBJ/u-boot"
  
-    display_alert "Extension" "repertoire OBJ=<$OBJ> UBOOT_OUT=<$UBOOT_OUT> DEST=<$DEST>" "info"
+    display_alert "Extension" "repertoire OBJ=<$OBJ> UBOOT_OUT=<$UBOOT_OUT> SRC=<$SRC> DEST=<$DEST>" "info"
      
     # Récupération des outils si nécessaire
     if [ ! -d "$fip_tools" ]; then
