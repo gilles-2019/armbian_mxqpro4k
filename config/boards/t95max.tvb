@@ -3,13 +3,14 @@ BOARD_NAME="t95max"
 BOARDFAMILY="meson64"
 BOARD_MAINTAINER="Gilles C"
 BOOT_LOGO="yes"
-#BOARDFAMILY="meson64"
+
 # Architecture et Noyau
 ARCH="arm64"
 BOOTSIZE="512"
 BOOTFS_TYPE="fat"
 # On utilise le noyau mainline "current" ou "edge"
 KERNEL_TARGET="current,edge"
+KERNEL_TEST_TARGET="current"
 FULL_DESKTOP="no"
 BOARDFAMILY="meson-sm1"
 # Configuration U-Boot spécifique (votre patch defconfig précédent)
