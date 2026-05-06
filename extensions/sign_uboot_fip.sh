@@ -132,7 +132,4 @@ user_config__list_all_armbian_hooks_avail() {
     # exit 0 
 }
 
-# On attache cette fonction au tout début du build pour voir la liste immédiatement
-() {
-    display_available_armbian_hooks__debug;
-}
+
