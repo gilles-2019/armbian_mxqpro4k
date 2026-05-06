@@ -70,8 +70,8 @@ function post_family_config__uboot_aml-s9xx-box() {
 	# This board type relies on the vendor installed u-boot on emmc to boot
 	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
 	display_alert "$BOARD" "Configuring ($BOARD) non-u-boot" "info"
-	unset BOOTSOURCE
-	declare -g BOOTCONFIG='none'
+	#unset BOOTSOURCE
+	#declare -g BOOTCONFIG='none'
 }
 
 function post_family_tweaks_bsp__config_aml-s9xx-box_bsp() {
