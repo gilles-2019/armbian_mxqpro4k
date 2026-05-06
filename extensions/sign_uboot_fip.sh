@@ -1,47 +1,61 @@
 
-post_config_uboot_target__sign_amlogic_fip() {
+post_family_tweaks_bsp__sign_amlogic_fip() {
     display_alert "sign_amlogic_fip() BOARD_NAME=$BOARD_NAME BOARD=$BOARD" "Amlogic-Secure" "info"
     # On cible spécifiquement la SEI610 (S905X3)
     [[ $BOARD_NAME == "sei610" ]] || return 0
 
-    display_alert "Signing FIP for SEI610 (U-Boot v2026.04)" "Amlogic-Secure" "info"
+    display_alert "Signing FIP after compilation" "Amlogic-Secure" "info"
 
-    # 1. Localisation dynamique du binaire (v2026.04 utilise souvent un build-dir séparé)
+    # 2. Localiser le binaire compilé
+    # À cette étape, Armbian a normalement placé le binaire dans $DEST/uboot ou $UBOOT_OUT_DIR
     local uboot_bin=""
-    for path in "${UBOOT_OUT_DIR}/u-boot.bin" "./u-boot.bin" "../u-boot.bin"; do
-        if [[ -f "$path" ]]; then uboot_bin="$(realpath "$path")"; break; fi
+    local search_paths=(
+        "$UBOOT_OUT_DIR/u-boot.bin"
+        "$DEST/uboot/u-boot.bin"
+        "$pwd/u-boot.bin"
+    )
+    display_alert "Signing FIP after compilation" "UBOOT_OUT_DIR=$UBOOT_OUT_DIR PWD=$pwd DEST=$DEST" "info"
+    for path in "${search_paths[@]}"; do
+        if [[ -f "$path" ]]; then uboot_bin="$path"; break; fi
     done
 
     if [[ -z "$uboot_bin" ]]; then
-        display_alert "ERREUR : u-boot.bin non trouvé pour v2026.04" "FIP" "err"
+        display_alert "ERREUR : u-boot.bin introuvable après compilation" "FIP" "err"
         return 0
     fi
 
-    # 2. Gestion de l'outil de signature (Repository LibreELEC amlogic-boot-fip)
-    # Cet outil est indispensable car Amlogic ne fournit pas les sources des BL2/BL30
+    # 3. Préparer les outils de signature
     local fip_tool_dir="${SRC}/cache/sources/amlogic-boot-fip"
-    if [ ! -d "$fip_tool_dir" ]; then
-        display_alert "Clonage des sources FIP (v2026.04 compatible)..." "FIP" "info"
+    if [[ ! -d "$fip_tool_dir" ]]; then
+        display_alert "Téléchargement amlogic-boot-fip..." "FIP" "info"
         git clone --depth=1 https://github.com "$fip_tool_dir"
     fi
 
-    # 3. Signature spécifique pour SEI610
-    local output_tmp="/tmp/sei610_fip_out"
-    mkdir -p "$output_tmp"
+    # 4. Signature dans un répertoire temporaire
+    local tmp_dir="/tmp/sign_sei610"
+    mkdir -p "$tmp_dir"
     
     pushd "$fip_tool_dir" > /dev/null
-    # La commande standard pour SEI610 assemble BL2 + BL30 + BL31 + votre U-Boot (BL33)
-    ./build-fip.sh sei610 "$uboot_bin" "$output_tmp"
+    # build-fip.sh : board, u-boot-source, output-directory
+    ./build-fip.sh sei610 "$uboot_bin" "$tmp_dir"
     popd > /dev/null
 
-    # 4. Déploiement pour Armbian (Chainloading)
-    # On place le résultat dans le dossier destination de l'image
-    mkdir -p "$DEST/uboot"
-    if [ -f "$output_tmp/u-boot.bin.sd.bin" ]; then
-        # On le nomme u-boot.ext car c'est le fichier cherché par le bootloader eMMC
-        cp "$output_tmp/u-boot.bin.sd.bin" "$DEST/uboot/u-boot.ext"
-        display_alert "Succès : Binaire signé pour v2026.04 disponible dans output/debug/uboot/u-boot.ext" "FIP" "info"
+    # 5. Déploiement du résultat pour Armbian
+    # On écrase le binaire par défaut ou on crée le fichier pour le chainloading
+    if [[ -f "$tmp_dir/u-boot.bin.sd.bin" ]]; then
+        # On le place dans le dossier final de destination d'Armbian
+        mkdir -p "$DEST/uboot"
+        cp "$tmp_dir/u-boot.bin.sd.bin" "$DEST/uboot/u-boot.ext"
+        
+        # Optionnel : Remplacer le binaire BSP par le binaire signé
+        cp "$tmp_dir/u-boot.bin.sd.bin" "$DEST/uboot/u-boot.bin"
+        
+        display_alert "Signature réussie : u-boot.ext généré dans $DEST/uboot/" "FIP" "info"
+    else
+        display_alert "Échec de la génération du binaire signé" "FIP" "err"
     fi
 
     return 0
 }
+
+
