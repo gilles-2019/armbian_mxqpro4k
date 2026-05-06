@@ -1,3 +1,4 @@
+source "${BASH_SOURCE%/*}/meson_sm1.conf"
 post_uboot_custom_postprocess__hook_meson_sm1() {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** appel fn de meson_sm1.conf" "info"
 	uboot_custom_postprocess
