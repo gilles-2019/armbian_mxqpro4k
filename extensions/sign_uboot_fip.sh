@@ -21,7 +21,7 @@ post_uboot_custom_postprocess__hook_sign_amlogic_fip() {
     local search_paths=(
         "$PWD/u-boot.bin"
     )
-    display_alert "Signing FIP after compilation" PWD=$PWD DEST=$DEST" "info"
+    display_alert "Signing FIP after compilation" "PWD=$PWD DEST=$DEST" "info"
     for path in "${search_paths[@]}"; do
         if [[ -f "$path" ]]; then uboot_bin="$path"; break; fi
     done
