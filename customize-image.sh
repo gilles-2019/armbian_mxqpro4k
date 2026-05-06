@@ -45,7 +45,8 @@ Main() {
 		export LED_PATH="/sys/class/leds/beelink-x2:blue:pwr"
 		echo -e "\e[1;32m[ info ]\e[0m Setup LED TRIGGER board $BOARD - $LED_PATH"
 		SetupLedTrigger
-	fi 		
+	fi 	
+		
 	case $RELEASE in
 		stretch)
 			# your code here
@@ -67,7 +68,7 @@ Main() {
 			# auto configurer rootpwd, wifi ssid
 			display_alert "CustImg" "test if do autoconfig for board: $BOARD" "info"
 			if [[ "$BOARD" == "mxqpro4k" ]]; then
-				display_alert "CustImg" "setup autoconfig root passwd root & wifi" "info"
+				display_alert "CustImg" "setup root passwd root & wifi" "info"
 				AutoBootSetup
 			else
 				display_alert "CustImg" "no config of root passwd" "info"
@@ -77,7 +78,7 @@ Main() {
 			if [ -f /boot/armbianEnv.txt ]; then
 				sed -i "s/verbosity=1/verbosity=7/" /boot/armbianEnv.txt
 				echo 'earlycon="on"' >> /boot/armbianEnv.txt
-			endif 
+			fi 
 			;;
 	esac
 } # Main
@@ -129,10 +130,10 @@ EOF
 
 }
 SetupLedTrigger() {
-# --- Configuration via Armbian LED Service ---
+	# --- Configuration via Armbian LED Service ---
 
-# 1. Créer le fichier de configuration (écrase le défaut s'il existe)
-# Remplacez 'votre_led' par le nom réel de votre LED (ex: green:net)
+	# 1. Créer le fichier de configuration (écrase le défaut s'il existe)
+	# Remplacez 'votre_led' par le nom réel de votre LED (ex: green:net)
 cat <<EOF > /etc/armbian-leds.conf
 [$LED_PATH]
 trigger=netdev
@@ -143,11 +144,11 @@ tx=1
 interval=52
 EOF
 
-			# 2. Charger le module netdev au démarrage 
-			echo "ledtrig-netdev" >> /etc/modules
+	# 2. Charger le module netdev au démarrage 
+	echo "ledtrig-netdev" >> /etc/modules
 
-			# 3. Activer le service pour qu'il se lance automatiquement
-			systemctl enable armbian-led-state
+	# 3. Activer le service pour qu'il se lance automatiquement
+	systemctl enable armbian-led-state
 }
 
 
