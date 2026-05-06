@@ -60,45 +60,45 @@ post_family_tweaks_bsp__sign_amlogic_fip() {
 
 user_config__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
 post_family_config__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
 extension_prepare_config__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
 post_family_tweaks_bsp__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
 pre_install_kernel_debs__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
 post_install_kernel_debs__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
 post_aggregate_packages__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
 pre_customize_image__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
 post_customize_image__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
 post_post_debootstrap_tweaks__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
 run_after_build__hook_trace_debug()
 {
-	display "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
