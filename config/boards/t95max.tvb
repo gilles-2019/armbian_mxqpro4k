@@ -6,6 +6,8 @@ BOOT_LOGO="yes"
 #BOARDFAMILY="meson64"
 # Architecture et Noyau
 ARCH="arm64"
+BOOTSIZE="512"
+BOOTFS_TYPE="fat"
 # On utilise le noyau mainline "current" ou "edge"
 KERNEL_TARGET="current,edge"
 FULL_DESKTOP="no"
@@ -19,9 +21,9 @@ UBOOT_TAG="v2026.04"
 UBOOTPATCHDIR="v2026.04"
 # Device Tree par défaut (SM1 SEI610 est le plus compatible)
 DEFAULT_FDT="amlogic/meson-sm1-sei610.dtb"
+SRC_EXTLINUX="yes"
+SRC_CMDLINE='rootflags=data=writeback console=ttyAML0,115200n8 console=tty0'
 
-# Paramètres de boot
-BOOT_SUPPORT_SPI="no"
 
 
 
