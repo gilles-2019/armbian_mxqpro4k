@@ -36,7 +36,7 @@ Main() {
     		echo -e "\e[1;32m[ info ]\e[0m no blacklist modules for board $BOARD"
     	fi
 	# SetupLedTrigger a besoin le nom pour leds selon le board
-	if [[ "$BOARD" = "sei610" ]]; then
+	if [[ "$BOARD" == "sei610" ]]; then
 		#a determiner pour amlogic s905x3
 		# export LED_PATH="/sys/class/leds/beelink-x2:blue:pwr"
 		echo -e "\e[1;32m[ info ]\e[0m no LED TRIGGER for board $BOARD"
@@ -65,11 +65,19 @@ Main() {
 			;;
 		noble)
 			# auto configurer rootpwd, wifi ssid
-			AutoBootSetup
+			display_alert "CustImg" "test if do autoconfig for board: $BOARD" "info"
+			if [[ "$BOARD" == "mxqpro4k" ]]; then
+				display_alert "CustImg" "setup autoconfig root passwd root & wifi" "info"
+				AutoBootSetup
+			else
+				display_alert "CustImg" "no config of root passwd" "info"
+			fi
 			
-			# 4. Ajouter parametres dans armbianEnv
-			sed -i "s/verbosity=1/verbosity=7/" /boot/armbianEnv.txt
-			echo 'earlycon="on"' >> /boot/armbianEnv.txt
+			# 4. Ajouter verbosity et earlycon parametres dans armbianEnv
+			if [ -f /boot/armbianEnv.txt ]; then
+				sed -i "s/verbosity=1/verbosity=7/" /boot/armbianEnv.txt
+				echo 'earlycon="on"' >> /boot/armbianEnv.txt
+			endif 
 			;;
 	esac
 } # Main
