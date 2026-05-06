@@ -102,3 +102,37 @@ run_after_build__hook_trace_debug()
 {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
+
+
+user_config__list_all_armbian_hooks_avail() {
+    display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+    display_alert "Scanning Armbian Core for available hook methods..." "Hook-Trace" "info"
+
+    # 1. Rechercher tous les appels à call_extension_method dans le code source
+    # On extrait le premier argument de la fonction qui correspond au nom du hook
+    local core_dir="${SRC}/lib"
+    local hooks=$(grep -r "call_extension_method" "$core_dir" | \
+                  sed -n "s/.*call_extension_method ['\"]\([^'\"]*\)['\"].*/\1/p" | \
+                  sort | uniq)
+
+    echo -e "\e[32m------------------------------------------------------------\e[0m"
+    echo -e "\e[1mListe des hooks détectés dans cette version d'Armbian :\e[0m"
+    echo -e "\e[32m------------------------------------------------------------\e[0m"
+
+    for hook in $hooks; do
+        # On cherche dans quel fichier ce hook est défini pour donner du contexte
+        local file_origin=$(grep -l "call_extension_method [\"']$hook[\"']" -r "$core_dir" | head -n 1 | xargs basename)
+        printf "  \e[33m%-35s\e[0m (Appelé dans : %s)\n" "$hook" "$file_origin"
+    done
+
+    echo -e "\e[32m------------------------------------------------------------\e[0m"
+    echo -e "Usage : Créez une fonction 'nom_du_hook__votre_nom' pour l'utiliser."
+    
+    # On s'arrête ici si vous voulez juste voir la liste (optionnel)
+    # exit 0 
+}
+
+# On attache cette fonction au tout début du build pour voir la liste immédiatement
+() {
+    display_available_armbian_hooks__debug;
+}
