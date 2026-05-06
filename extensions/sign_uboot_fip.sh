@@ -102,7 +102,34 @@ run_after_build__hook_trace_debug()
 {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
-
+build_custom_uboot__hook_trace_debug()
+{
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+} 
+fetch_custom_uboot__hook_trace_debug()
+{
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+}
+post_config_uboot_target__hook_trace_debug()
+{
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+}
+post_uboot_custom_postprocess__hook_trace_debug()
+{
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+}
+pre_config_uboot_target__hook_trace_debug()
+{
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+}
+pre_package_uboot_image__hook_trace_debug()
+{
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+}
+uboot_make_config__hook_trace_debug()
+{
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+}
 
 user_config__list_all_armbian_hooks_avail() {
     display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
