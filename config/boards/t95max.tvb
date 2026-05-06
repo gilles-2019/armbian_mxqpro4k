@@ -11,14 +11,14 @@ BOOTFS_TYPE="fat"
 # On utilise le noyau mainline "current" ou "edge"
 KERNEL_TARGET="current,edge"
 FULL_DESKTOP="no"
-
+BOARDFAMILY="meson-sm1"
 # Configuration U-Boot spécifique (votre patch defconfig précédent)
 BOOTCONFIG="sei610_defconfig"
 #UBOOT_TARGET_MAP="sei610:sei610_defconfig"
 # Forcer l'utilisation de la version la plus récente supportée par Armbian
-UBOOT_BRANCH="v2026.04"
-UBOOT_TAG="v2026.04"
-UBOOTPATCHDIR="v2026.04"
+#UBOOT_BRANCH="v2026.04"
+#UBOOT_TAG="v2026.04"
+#UBOOTPATCHDIR="v2026.04"
 # Device Tree par défaut (SM1 SEI610 est le plus compatible)
 DEFAULT_FDT="amlogic/meson-sm1-sei610.dtb"
 SRC_EXTLINUX="yes"

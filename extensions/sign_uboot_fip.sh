@@ -1,5 +1,5 @@
 
-post_uboot_custom_postprocess__hook_sign_amlogic_fip() {
+post_uboot_custom_postprocess_NOTDONE_hook_sign_amlogic_fip() {
     display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** signature du uboot" "info"
     display_alert "sign_amlogic_fip() BOARD_NAME=$BOARD_NAME BOARD=$BOARD" "Amlogic-Secure" "info"
     display_alert "Dumping environment variables to output/env_dump.txt" "DEBUG" "GILLES"
@@ -66,7 +66,7 @@ post_uboot_custom_postprocess__hook_sign_amlogic_fip() {
 }
 
 
-function post_family_config__uboot_aml-s9xx-box() {
+function post_family_config_NOTDONE_uboot_aml-s9xx-box() {
 	# This board type relies on the vendor installed u-boot on emmc to boot
 	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
 	display_alert "$BOARD" "Configuring ($BOARD) non-u-boot" "info"
@@ -74,7 +74,7 @@ function post_family_config__uboot_aml-s9xx-box() {
 	#declare -g BOOTCONFIG='none'
 }
 
-function post_family_tweaks_bsp__config_aml-s9xx-box_bsp() {
+function post_family_tweaks_bsp_NOTDONE_config_aml-s9xx-box_bsp() {
 	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
 	: "${destination:?destination is not set}"
 
