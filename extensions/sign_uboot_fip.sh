@@ -1,8 +1,13 @@
-source "${BASH_SOURCE%/*}/meson_sm1.conf"
+
 post_uboot_custom_postprocess__hook_meson_sm1() {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** appel fn de meson_sm1.conf" "info"
-	uboot_custom_postprocess
+
+	if [[ $BOARD == sei610 ]]; then
+		display_alert "GILLES" "trace dans ${FUNCNAME[0]} file meson-sm1.conf" "info"
+		uboot_g12_postprocess $SRC/cache/sources/amlogic-boot-fip/sei610 g12a
+	fi
 }
+
 post_uboot_custom_postprocess_NOTDONE_hook_sign_amlogic_fip() {
     display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** signature du uboot" "info"
     display_alert "sign_amlogic_fip() BOARD_NAME=$BOARD_NAME BOARD=$BOARD" "Amlogic-Secure" "info"
