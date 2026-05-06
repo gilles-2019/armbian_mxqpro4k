@@ -19,11 +19,9 @@ post_uboot_custom_postprocess__hook_sign_amlogic_fip() {
     # À cette étape, Armbian a normalement placé le binaire dans $DEST/uboot ou $UBOOT_OUT_DIR
     local uboot_bin=""
     local search_paths=(
-        "$UBOOT_OUT_DIR/u-boot.bin"
-        "$DEST/uboot/u-boot.bin"
-        "$pwd/u-boot.bin"
+        "$PWD/u-boot.bin"
     )
-    display_alert "Signing FIP after compilation" "UBOOT_OUT_DIR=$UBOOT_OUT_DIR PWD=$pwd DEST=$DEST" "info"
+    display_alert "Signing FIP after compilation" PWD=$PWD DEST=$DEST" "info"
     for path in "${search_paths[@]}"; do
         if [[ -f "$path" ]]; then uboot_bin="$path"; break; fi
     done
