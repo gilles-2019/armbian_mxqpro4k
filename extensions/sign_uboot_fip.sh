@@ -1,5 +1,6 @@
 
-post_family_tweaks_bsp__sign_amlogic_fip() {
+post_uboot_custom_postprocess__sign_amlogic_fip() {
+    display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** signature du uboot" "info"
     display_alert "sign_amlogic_fip() BOARD_NAME=$BOARD_NAME BOARD=$BOARD" "Amlogic-Secure" "info"
     # On cible spécifiquement la SEI610 (S905X3)
     [[ $BOARD_NAME == "sei610" ]] || return 0
