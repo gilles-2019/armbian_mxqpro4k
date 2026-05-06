@@ -2,6 +2,14 @@
 post_uboot_custom_postprocess__hook_sign_amlogic_fip() {
     display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** signature du uboot" "info"
     display_alert "sign_amlogic_fip() BOARD_NAME=$BOARD_NAME BOARD=$BOARD" "Amlogic-Secure" "info"
+    display_alert "Dumping environment variables to output/env_dump.txt" "DEBUG" "GILLES"
+    
+    # On trie et on enregistre tout dans un fichier pour ne pas polluer le terminal
+    printenv | sort > "${DEST}/env_dump.txt"
+    
+    # Optionnel : afficher une variable spécifique dans le terminal
+    display_alert "Variable DEST actuelle : $DEST" "ENV" "GILLES"
+    
     # On cible spécifiquement la SEI610 (S905X3)
     [[ $BOARD_NAME == "sei610" ]] || return 0
 
@@ -115,10 +123,10 @@ post_config_uboot_target__hook_trace_debug()
 {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
 }
-##post_uboot_custom_postprocess__hook_trace_debug()
-#{
-#	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
-#}
+post_uboot_custom_postprocess__hook_trace_debug()
+{
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
+}
 pre_config_uboot_target__hook_trace_debug()
 {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]}" "info"
