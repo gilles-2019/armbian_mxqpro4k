@@ -10,19 +10,20 @@ post_uboot_custom_postprocess__hook_meson_sm1() {
 
 
 
-
 function post_family_config__uboot_aml-s9xx-box() {
 	# This board type relies on the vendor installed u-boot on emmc to boot
 	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
-	display_alert "$BOARD" "${FUNCNAME[0]} KEEP UBOOT BOOTSOURCE" "info"
-	#unset BOOTSOURCE
-	#declare -g BOOTCONFIG='none'
+	display_alert "$BOARD" "${FUNCNAME[0]} UNSET UBOOT BOOTSOURCE" "info"
+	unset BOOTSOURCE
+	declare -g BOOTCONFIG='none'
 }
 
-function pre_package_uboot_image__config_aml-s9xx-box_bsp() {
+# post_family_tweaks_bsp__    pre_package_uboot_image__
+function  post_family_tweaks_bsp__config_aml-s9xx-box_bsp() {
 	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
 	: "${destination:?destination is not set}"
-
+	display_alert "GILLES" "dans ${FUNCNAME[0]} destination=${destination}" "info"
+	
 	# Important: this board has board-specific bsp-cli files in config/optional/boards/aml-s9xx-box/_packages/bsp-cli
 	#            that path is hashed by the bsp-cli hashing function automatically
 	display_alert "${BOARD}" "Adjusting perms of bsp-cli files for ${BOARD} in /root" "info"
