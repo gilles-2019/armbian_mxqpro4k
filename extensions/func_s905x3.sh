@@ -11,15 +11,15 @@ post_uboot_custom_postprocess__hook_meson_sm1() {
 
 
 
-function post_family_config_NOTDONE_uboot_aml-s9xx-box() {
+function post_family_config__uboot_aml-s9xx-box() {
 	# This board type relies on the vendor installed u-boot on emmc to boot
 	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
-	display_alert "$BOARD" "Configuring ($BOARD) non-u-boot" "info"
+	display_alert "$BOARD" "${FUNCNAME[0]} KEEP UBOOT BOOTSOURCE" "info"
 	#unset BOOTSOURCE
 	#declare -g BOOTCONFIG='none'
 }
 
-function post_family_tweaks_bsp__config_aml-s9xx-box_bsp() {
+function pre_package_uboot_image__config_aml-s9xx-box_bsp() {
 	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
 	: "${destination:?destination is not set}"
 
@@ -35,6 +35,7 @@ function post_family_tweaks_bsp__config_aml-s9xx-box_bsp() {
 	display_alert "${BOARD}" "Adding bsp-cli preinst logic" "info"
 	# Inline function! So this function is automatically hashed when this hook is hashed.
 	function aml-s9xx-box-bsp-cli-preinst() {
+		display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
 		#update of the board bsp-cli package fails because the filesystem type is
 		#fat and dpkg tries to create a hard link for the existing files as backup
 		#so rm the files instead in a preinst step
