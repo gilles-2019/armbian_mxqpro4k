@@ -5,6 +5,7 @@ BOOT_LOGO="desktop"
 # Architecture et Famille
 ARCH="arm64"
 LINUX_FAMILY="meson64"
+BOARDFAMILY="meson64"
 CHIP_FAMILY="sm1"
 
 # Noyau et Device Tree
