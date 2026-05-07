@@ -23,11 +23,16 @@ BOOTCONFIG="sei610_defconfig"
 # Device Tree par défaut (SM1 SEI610 est le plus compatible)
 DEFAULT_FDT="amlogic/meson-sm1-sei610.dtb"
 SRC_EXTLINUX="yes"
-SRC_CMDLINE='rootflags=data=writeback console=ttyAML0,115200n8 console=tty0'
+#SRC_CMDLINE='rootflags=data=writeback console=ttyAML0,115200n8 console=tty0'
 #
 #
 UBOOT_TARGET_MAP="u-boot.bin u-boot.bin.sd.bin"
-BOOT_LOGO="yes"
+
+
+# Use extlinux and u-boot-menu extension
+declare -g SRC_EXTLINUX="yes"
+declare -g SRC_CMDLINE="rootflags=data=writeback loglevel=7 splash=verbose console=ttyAML0,115200 console=tty0" 
+enable_extension "u-boot-menu"                                            # this generates the extlinux.conf
 
 
 

@@ -1,0 +1,32 @@
+# Amlogic S905X3 SEI610 configuration
+BOARD_NAME="SEI610"
+BOOT_LOGO="desktop"
+
+# Architecture et Famille
+ARCH="arm64"
+LINUX_FAMILY="meson64"
+CHIP_FAMILY="sm1"
+
+# Noyau et Device Tree
+KERNEL_TARGET="current,edge"
+DEFAULT_KERNEL_CONFIG="linux-meson64-current.config"
+DTB_FILE="amlogic/meson-sm1-sei610.dtb"
+
+# Bootloader
+BOOT_SOURCE="u-boot"
+UBOOT_TARGET_MAP="u-boot-s905x3"
+UBOOT_CONFIG="sei610_defconfig"
+
+# Paramètres d'image
+BOOT_SIZE="256"
+BOOTFS_TYPE="fat"
+ROOTFS_TYPE="ext4"
+EXTLINUX_FDT_PATH="/dtb/amlogic/meson-sm1-sei610.dtb"
+
+# Fonction de post-traitement pour la signature FIP (G12B/SM1)
+# Note : Le dossier sei610-s905x3 doit contenir les blobs BL2/BL30/BL31 pour SM1
+function user_config_after_build_bootloader() {
+    display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** appel uboot_g12..." "info"
+    uboot_g12_postprocess_ng "${SRC}/cache/sources/amlogic-boot-fip/sei610-s905x3"
+}
+
