@@ -7,6 +7,7 @@ ARCH="arm64"
 LINUX_FAMILY="meson64"
 BOARDFAMILY="meson64"
 CHIP_FAMILY="sm1"
+BOOTCONFIG="sei610_defconfig"
 
 # Noyau et Device Tree
 KERNEL_TARGET="current,edge"
