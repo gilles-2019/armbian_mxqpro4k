@@ -19,7 +19,7 @@ function post_family_config_NOTDONE_uboot_aml-s9xx-box() {
 	#declare -g BOOTCONFIG='none'
 }
 
-function post_family_tweaks_bsp_NOTDONE_config_aml-s9xx-box_bsp() {
+function post_family_tweaks_bsp__config_aml-s9xx-box_bsp() {
 	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
 	: "${destination:?destination is not set}"
 
