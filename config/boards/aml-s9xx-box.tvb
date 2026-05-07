@@ -17,6 +17,7 @@ SRC_EXTLINUX="yes"
 SRC_CMDLINE='rootflags=data=writeback console=ttyAML0,115200n8 console=tty0'
 
 function post_family_config__uboot_aml-s9xx-box() {
+	display_alert "GILLES" "entre dans ${FUNCNAME[0]} IN AML-S9XXBOX.TVB BOARD FILE" "info"
 	# This board type relies on the vendor installed u-boot on emmc to boot
 	display_alert "$BOARD" "Configuring ($BOARD) non-u-boot" "info"
 	unset BOOTSOURCE
@@ -24,6 +25,7 @@ function post_family_config__uboot_aml-s9xx-box() {
 }
 
 function post_family_tweaks_bsp__config_aml-s9xx-box_bsp() {
+	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD} FN IN AML-S9XX-BOX.TVB" "info"
 	: "${destination:?destination is not set}"
 
 	# Important: this board has board-specific bsp-cli files in config/optional/boards/aml-s9xx-box/_packages/bsp-cli
@@ -38,6 +40,7 @@ function post_family_tweaks_bsp__config_aml-s9xx-box_bsp() {
 	display_alert "${BOARD}" "Adding bsp-cli preinst logic" "info"
 	# Inline function! So this function is automatically hashed when this hook is hashed.
 	function aml-s9xx-box-bsp-cli-preinst() {
+		display_alert "GILLES" "entre dans ${FUNCNAME[0]} INLINE FUNCTION" "info"
 		#update of the board bsp-cli package fails because the filesystem type is
 		#fat and dpkg tries to create a hard link for the existing files as backup
 		#so rm the files instead in a preinst step
