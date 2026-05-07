@@ -7,7 +7,7 @@ ARCH="arm64"
 LINUX_FAMILY="meson64"
 BOARDFAMILY="meson64"
 CHIP_FAMILY="sm1"
-BOOTCONFIG="sei610_defconfig"
+#BOOTCONFIG="sei610_defconfig"
 
 # Noyau et Device Tree
 KERNEL_TARGET="current,edge"
@@ -16,8 +16,9 @@ DTB_FILE="amlogic/meson-sm1-sei610.dtb"
 
 # Bootloader
 BOOT_SOURCE="u-boot"
-UBOOT_TARGET_MAP="u-boot-s905x3"
-UBOOT_CONFIG="sei610_defconfig"
+UBOOT_CONFIG="sei610" 
+#UBOOT_TARGET_MAP="u-boot-s905x3"
+#UBOOT_CONFIG="sei610_defconfig"
 
 # Paramètres d'image
 BOOT_SIZE="256"
