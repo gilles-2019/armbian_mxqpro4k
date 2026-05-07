@@ -1,8 +1,8 @@
 
 post_uboot_custom_postprocess__hook_meson_sm1() {
-	display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** appel fn de meson_sm1.conf" "info"
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** appel fn SIGNATURE BOARD=$BOARD" "info"
 
-	if [[ $BOARD == sei610 ]]; then
+	if [[ $BOARD == sei610 || true]]; then
 		display_alert "GILLES" "trace dans ${FUNCNAME[0]} file meson-sm1.conf" "info"
 		uboot_g12_postprocess $SRC/cache/sources/amlogic-boot-fip/sei610 g12a
 	fi
