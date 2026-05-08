@@ -20,13 +20,11 @@ function fill_boot_partition() {
 	else
 		display_alert  "GILLES" "ERR.scripts Amlogic ABSENT:$MY_BOOT_CMD" "info"
 	fi
-    	# 4. Copie du DTB (Récupéré depuis la zone d'installation du noyau)
-   	# Note: On le prend dans ${DEST}/boot car Armbian y installe les fichiers du noyau
-   	# Exemple de chemin dynamique dans votre script
+    	# 4. Copie du DTB (Récupéré depuis cache kernel)
 	DTB_PATH="${SRC}/cache/sources/linux*/linux-${LINUX_FAMILY}/${CHIP_FAMILY}/arch/arm64/boot/dts"
 	
     	if [ -f "${DTB_PATH}/amlogic/meson-sm1-sei610.dtb" ]; then
-        	cp "${DTB_PATH/amlogic/*.dtb" "${DEST}/boot/dtb/amlogic/"
+        	cp "${DTB_PATH}/amlogic/*.dtb" "${DEST}/boot/dtb/amlogic/"
     	else
         	display_alert "DTB introuvable dans ${DEST}/boot" "S905X3" "err"
     	fi
