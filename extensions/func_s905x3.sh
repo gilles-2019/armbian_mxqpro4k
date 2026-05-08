@@ -1,4 +1,5 @@
 function fill_boot_partition() {
+	display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** dans fn fill_boot_partition" "info"
 	# On s'assure que le répertoire de destination existe
 	mkdir -p "${DEST}/boot/extlinux"
 
@@ -56,7 +57,7 @@ function post_uboot_custom_postprocess__hook_meson_sm1() {
         	ls -F
     	fi
  
-    fill_boot_partition(); 	
+    	fill_boot_partition 	
 }
 
 
