@@ -1,7 +1,38 @@
+function fill_boot_partition() {
+	# On s'assure que le répertoire de destination existe
+	mkdir -p "${DEST}/boot/extlinux"
 
-post_uboot_custom_postprocess__hook_meson_sm1() {
+	# A. Copie du binaire signé (Chainloader)
+	cp u-boot.bin.signed "${DEST}/boot/u-boot.ext"
+
+	# B. Génération du script d'amorce (aml_autoscript)
+	# On utilise mkimage pour convertir votre .cmd en binaire u-boot
+    	if [ -f "${SRC}/config/bootscripts/boot-amlogic.cmd" ]; then
+		display_alert  "GILLES" "Copie des scripts d'amorçage universels Amlogic" "info"
+		mkimage -A arm64 -O linux -T script -C none -a 0 -e 0 \
+		-n "autoscript" -d "${SRC}/config/bootscripts/boot-amlogic.cmd" "${DEST}/boot/	aml_autoscript"
+		cp "${DEST}/boot/aml_autoscript" "${DEST}/boot/s905_autoscript"
+	else
+		display_alert  "GILLES" "ERR.scripts Amlogic ABSENT: boot-amlogic.cmd" "info"
+		display_alert  "GILLES" "list LS dir: ${SRC}/config/bootscripts" "info"
+		ls -F ${SRC}/config/bootscripts
+	fi
+	
+	display_alert  "GILLES" "Création configuration de démarrage (extlinux.conf)" "info"
+	# C. Création du fichier de configuration de démarrage (extlinux.conf)
+	cat <<EOF > "${DEST}/boot/extlinux/extlinux.conf"
+LABEL Armbian
+  LINUX /vmlinuz
+  INITRD /uInitrd
+  FDT /dtb/amlogic/meson-sm1-sei610.dtb
+  APPEND root=_SDBASE_ rootwait console=ttyAML0,115200 console=tty1 rw rootflags=discard
+EOF
+
+}
+
+function post_uboot_custom_postprocess__hook_meson_sm1() {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** appel fn SIGNATURE BOARD=$BOARD" "info"
-        display_alert  "GILLES" "AVANT uboot_g12..() liste repertoire courant:${PWD}" "info"
+        display_alert  "GILLES" "AVANT uboot_g12..() ls -F  pwd=${PWD}" "info"
         ls -F
 	if [[ $BOARD == "sei610" || true  ]]; then
 		display_alert "GILLES" "${FUNCNAME[0]} Signature FIP et préparation Chainload" "info"
@@ -9,11 +40,12 @@ post_uboot_custom_postprocess__hook_meson_sm1() {
 	fi
 	 # 2. Renommer pour satisfaire le packageur Armbian (évite l'erreur 43)
     	
-        display_alert  "GILLES" "liste repertoire courant:${PWD}" "info"
+        display_alert  "GILLES" "APRES uboot_g12..() ls -F  pwd=${PWD}" "info"
         ls -F
         display_alert  "GILLES" "ASSURE U-BOOT.BIN.SIGNED PRESENT" "info"
         if [ ! -f "u-boot.bin.signed" ]; then
-        	cp u-boot.bin u-boot.bin.signed 
+        	display_alert  "GILLES" "prend u-boot.bin.sd.bin pour U-BOOT.BIN.SIGNED" "info"
+        	cp u-boot.bin.sd.bin u-boot.bin.signed 
         fi
         
     	if [ -f "u-boot.bin.signed" ]; then
@@ -23,26 +55,8 @@ post_uboot_custom_postprocess__hook_meson_sm1() {
         	display_alert  "GILLES" "fichier u-boot.bin.signed manquant dans:" "info"
         	ls -F
     	fi
-
-    	# 3. Préparer le fichier u-boot.ext pour la partition FAT
-    	# On le place dans le dossier de destination des fichiers de boot
-    	display_alert  "GILLES" "Copie de u-boot.bin.signed vers la dest. FIP en u-boot.ext" "info"
-    	mkdir -p "${DEST}/boot"
-    	cp u-boot.bin.signed "${DEST}/boot/u-boot.ext"
-    	
-    	
-    # Copie des scripts d'amorçage universels Amlogic
-    # Armbian en possède souvent dans son dossier de config/bootscripts/
-    if [ -f "${SRC}/config/bootscripts/boot-amlogic.cmd" ]; then
-    	display_alert  "GILLES" "Copie des scripts d'amorçage universels Amlogic" "info"
-        # On compile le .cmd en .scr lisible par U-Boot
-        mkimage -A arm64 -O linux -T script -C none -a 0 -e 0 \
-            -n "s905_autoscript" -d "${SRC}/config/bootscripts/boot-amlogic.cmd" "${DEST}/boot/aml_autoscript"
-        # On fait souvent une copie nommée s905_autoscript par sécurité
-        cp "${DEST}/boot/aml_autoscript" "${DEST}/boot/s905_autoscript"
-    else
-    	display_alert  "GILLES" "ERR.scripts Amlogic ABSENT: ${SRC}/config/bootscripts/boot-amlogic.cmd" "info"
-    fi   	
+ 
+    fill_boot_partition(); 	
 }
 
 

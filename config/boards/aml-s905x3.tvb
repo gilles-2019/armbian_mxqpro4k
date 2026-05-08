@@ -22,6 +22,7 @@ UBOOT_CONFIG="sei610"
 #UBOOT_TARGET_MAP="u-boot.bin.sd.bin" # Nom attendu par le packageur Armbian
 #UBOOT_TARGET_MAP="u-boot-s905x3"
 #UBOOT_CONFIG="sei610_defconfig"
+SKIP_BOOTLOADER_INSTALL="yes"
 
 # Paramètres d'image
 BOOT_SIZE="512"
