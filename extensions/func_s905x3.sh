@@ -1,24 +1,33 @@
 function fill_boot_partition() {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** dans fn fill_boot_partition" "info"
 	# On s'assure que le répertoire de destination existe
-	mkdir -p "${DEST}/boot/extlinux"
+    	# 2. Création de l'arborescence sur la partition FAT
+    	mkdir -p "${DEST}/boot/dtb/amlogic"
+    	mkdir -p "${DEST}/boot/extlinux"
 
 	# A. Copie du binaire signé (Chainloader)
 	cp u-boot.bin.signed "${DEST}/boot/u-boot.ext"
 
+	# Chemin vers votre script personnalisé
+    	local MY_BOOT_CMD="${SRC}/userpatches/boot-amlogic.cmd"
 	# B. Génération du script d'amorce (aml_autoscript)
 	# On utilise mkimage pour convertir votre .cmd en binaire u-boot
-    	if [ -f "${SRC}/config/bootscripts/boot-amlogic.cmd" ]; then
+    	if [ -f "$MY_BOOT_CMD" ]; then
 		display_alert  "GILLES" "Copie des scripts d'amorçage universels Amlogic" "info"
 		mkimage -A arm64 -O linux -T script -C none -a 0 -e 0 \
-		-n "autoscript" -d "${SRC}/config/bootscripts/boot-amlogic.cmd" "${DEST}/boot/	aml_autoscript"
+		-n "autoscript" -d "$MY_BOOT_CMD" "${DEST}/boot/aml_autoscript"
 		cp "${DEST}/boot/aml_autoscript" "${DEST}/boot/s905_autoscript"
 	else
-		display_alert  "GILLES" "ERR.scripts Amlogic ABSENT: boot-amlogic.cmd" "info"
-		display_alert  "GILLES" "list LS dir: ${SRC}/config/bootscripts" "info"
-		ls -F ${SRC}/config/bootscripts
+		display_alert  "GILLES" "ERR.scripts Amlogic ABSENT:$MY_BOOT_CMD" "info"
 	fi
-	
+    	# 4. Copie du DTB (Récupéré depuis la zone d'installation du noyau)
+   	# Note: On le prend dans ${DEST}/boot car Armbian y installe les fichiers du noyau
+    	if [ -f "${DEST}/boot/dtb/amlogic/meson-sm1-sei610.dtb" ]; then
+        	cp "${DEST}/boot/dtb/amlogic/*" "${DEST}/boot/dtb/amlogic/"
+    	else
+        	display_alert "DTB introuvable dans ${DEST}/boot" "S905X3" "err"
+    	fi
+    		
 	display_alert  "GILLES" "Création configuration de démarrage (extlinux.conf)" "info"
 	# C. Création du fichier de configuration de démarrage (extlinux.conf)
 	cat <<EOF > "${DEST}/boot/extlinux/extlinux.conf"
