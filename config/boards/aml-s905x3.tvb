@@ -6,8 +6,8 @@ BOOT_LOGO="desktop"
 ARCH="arm64"
 LINUX_FAMILY="meson64"
 #BOARDFAMILY="meson64"
-BOARDFAMILY="meson-gxl"
-BOARD_VENDOR="amlogic"
+#BOARDFAMILY="meson-gxl"
+#BOARD_VENDOR="amlogic"
 CHIP_FAMILY="sm1"
 BOOTCONFIG="sei610_defconfig"
 
@@ -19,6 +19,7 @@ DTB_FILE="amlogic/meson-sm1-sei610.dtb"
 # Bootloader
 BOOT_SOURCE="u-boot"
 UBOOT_CONFIG="sei610" 
+UBOOT_TARGET_MAP="u-boot.bin.sd.bin" # Nom attendu par le packageur Armbian
 #UBOOT_TARGET_MAP="u-boot-s905x3"
 #UBOOT_CONFIG="sei610_defconfig"
 
@@ -32,7 +33,7 @@ EXTLINUX_FDT_PATH="/dtb/amlogic/meson-sm1-sei610.dtb"
 BOOT_SCRIPT_TYPE="extlinux"
 #
 # Use extlinux and u-boot-menu extension
-declare -g SRC_EXTLINUX="yes"
-declare -g SRC_CMDLINE="rootflags=data=writeback loglevel=7 splash=verbose console=ttyAML0,115200 console=tty0" 
-enable_extension "u-boot-menu"  # this generates the extlinux.conf
+#declare -g SRC_EXTLINUX="yes"
+#declare -g SRC_CMDLINE="rootflags=data=writeback loglevel=7 splash=verbose console=ttyAML0,115200 console=tty0" 
+#enable_extension "u-boot-menu"  # this generates the extlinux.conf
 

@@ -2,15 +2,39 @@
 post_uboot_custom_postprocess__hook_meson_sm1() {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** appel fn SIGNATURE BOARD=$BOARD" "info"
 
-	if [[ $BOARD == "sei610" || true ]]; then
-		display_alert "GILLES" "trace dans ${FUNCNAME[0]} file meson-sm1.conf" "info"
+	if [[ $BOARD == "sei610" || $BOARD= "aml-s905x3"  ]]; then
+		display_alert "GILLES" "${FUNCNAME[0]} Signature FIP et préparation Chainload" "info"
 		uboot_g12_postprocess $SRC/cache/sources/amlogic-boot-fip/sei610 g12a
 	fi
+	 # 2. Renommer pour satisfaire le packageur Armbian (évite l'erreur 43)
+    	if [ -f "u-boot.bin.signed" ]; then
+    		display_alert  "GILLES" "Renommer pour satisfaire le packageur Armbian" "info"
+        	cp u-boot.bin.signed u-boot.bin.sd.bin
+    	fi
+
+    	# 3. Préparer le fichier u-boot.ext pour la partition FAT
+    	# On le place dans le dossier de destination des fichiers de boot
+    	display_alert  "GILLES" "Copie de u-boot.ext vers la destination FIP" "info"
+    	mkdir -p "${DEST}/boot"
+    	cp u-boot.bin.signed "${DEST}/boot/u-boot.ext"
+    	
+     # Copie des scripts d'amorçage universels Amlogic
+    # Armbian en possède souvent dans son dossier de config/bootscripts/
+    if [ -f "${SRC}/config/bootscripts/boot-amlogic.cmd" ]; then
+    	display_alert  "GILLES" "Copie des scripts d'amorçage universels Amlogic" "info"
+        # On compile le .cmd en .scr lisible par U-Boot
+        mkimage -A arm64 -O linux -T script -C none -a 0 -e 0 \
+            -n "s905_autoscript" -d "${SRC}/config/bootscripts/boot-amlogic.cmd" "${DEST}/boot/aml_autoscript"
+        # On fait souvent une copie nommée s905_autoscript par sécurité
+        cp "${DEST}/boot/aml_autoscript" "${DEST}/boot/s905_autoscript"
+    else
+    	display_alert  "GILLES" "ERR.scripts Amlogic ABSENT: ${SRC}/config/bootscripts/boot-amlogic.cmd" "info"
+    fi   	
 }
 
 
 
-function post_family_config__uboot_aml-s9xx-box() {
+function post_family_config_NOTDONE_uboot_aml-s9xx-box() {
 	# This board type relies on the vendor installed u-boot on emmc to boot
 	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
 	display_alert "$BOARD" "${FUNCNAME[0]} UNSET UBOOT BOOTSOURCE" "info"
@@ -19,7 +43,7 @@ function post_family_config__uboot_aml-s9xx-box() {
 }
 
 # post_family_tweaks_bsp__    pre_package_uboot_image__
-function  post_family_tweaks_bsp__config_aml-s9xx-box_bsp() {
+function  post_family_tweaks_bsp_NOTDONE_config_aml-s9xx-box_bsp() {
 	display_alert "GILLES" "entre dans ${FUNCNAME[0]} board:${BOARD}" "info"
 	: "${destination:?destination is not set}"
 	display_alert "GILLES" "dans ${FUNCNAME[0]} destination=${destination}" "info"
