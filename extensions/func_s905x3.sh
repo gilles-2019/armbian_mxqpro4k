@@ -7,16 +7,24 @@ post_uboot_custom_postprocess__hook_meson_sm1() {
 		uboot_g12_postprocess $SRC/cache/sources/amlogic-boot-fip/sei610 g12a
 	fi
 	 # 2. Renommer pour satisfaire le packageur Armbian (évite l'erreur 43)
-    	if [ -f "u-boot.bin.signed" ]; then
+    	# ---> erreur non trouver if [ -f "u-boot.bin.signed" ]; then
+        display_alert  "GILLES" "liste repertoir courant:" "info"
+        ls -F
+    	if [ -f "u-boot.bin" ]; then
     		display_alert  "GILLES" "Renommer pour satisfaire le packageur Armbian" "info"
-        	cp u-boot.bin.signed u-boot.bin.sd.bin
+        	#--- err. cp u-boot.bin.signed u-boot.bin.sd.bin
+        	cp u-boot.bin u-boot.bin.sd.bin
+        else
+        	display_alert  "GILLES" "fichier u-boot.bin manquant dans:" "info"
+        	ls -F
     	fi
 
     	# 3. Préparer le fichier u-boot.ext pour la partition FAT
     	# On le place dans le dossier de destination des fichiers de boot
-    	display_alert  "GILLES" "Copie de u-boot.ext vers la destination FIP" "info"
+    	display_alert  "GILLES" "Copie de u-boot.bin.signed vers la destination FIP" "info"
     	mkdir -p "${DEST}/boot"
     	cp u-boot.bin.signed "${DEST}/boot/u-boot.ext"
+    	
     	
      # Copie des scripts d'amorçage universels Amlogic
     # Armbian en possède souvent dans son dossier de config/bootscripts/
