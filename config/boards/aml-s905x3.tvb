@@ -5,7 +5,9 @@ BOOT_LOGO="desktop"
 # Architecture et Famille
 ARCH="arm64"
 LINUX_FAMILY="meson64"
-BOARDFAMILY="meson64"
+#BOARDFAMILY="meson64"
+BOARDFAMILY="meson-gxl"
+BOARD_VENDOR="amlogic"
 CHIP_FAMILY="sm1"
 BOOTCONFIG="sei610_defconfig"
 
@@ -21,7 +23,7 @@ UBOOT_CONFIG="sei610"
 #UBOOT_CONFIG="sei610_defconfig"
 
 # Paramètres d'image
-BOOT_SIZE="256"
+BOOT_SIZE="512"
 BOOTFS_TYPE="fat"
 ROOTFS_TYPE="ext4"
 EXTLINUX_FDT_PATH="/dtb/amlogic/meson-sm1-sei610.dtb"
