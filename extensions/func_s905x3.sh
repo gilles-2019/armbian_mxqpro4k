@@ -1,32 +1,37 @@
 
 post_uboot_custom_postprocess__hook_meson_sm1() {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** appel fn SIGNATURE BOARD=$BOARD" "info"
-
+        display_alert  "GILLES" "AVANT uboot_g12..() liste repertoire courant:${PWD}" "info"
+        ls -F
 	if [[ $BOARD == "sei610" || true  ]]; then
 		display_alert "GILLES" "${FUNCNAME[0]} Signature FIP et préparation Chainload" "info"
 		uboot_g12_postprocess $SRC/cache/sources/amlogic-boot-fip/sei610 g12a
 	fi
 	 # 2. Renommer pour satisfaire le packageur Armbian (évite l'erreur 43)
-    	# ---> erreur non trouver if [ -f "u-boot.bin.signed" ]; then
-        display_alert  "GILLES" "liste repertoir courant:" "info"
+    	
+        display_alert  "GILLES" "liste repertoire courant:${PWD}" "info"
         ls -F
-    	if [ -f "u-boot.bin" ]; then
+        display_alert  "GILLES" "ASSURE U-BOOT.BIN.SIGNED PRESENT" "info"
+        if [ ! -f "u-boot.bin.signed" ]; then
+        	cp u-boot.bin u-boot.bin.signed 
+        fi
+        
+    	if [ -f "u-boot.bin.signed" ]; then
     		display_alert  "GILLES" "Renommer pour satisfaire le packageur Armbian" "info"
-        	#--- err. cp u-boot.bin.signed u-boot.bin.sd.bin
-        	cp u-boot.bin u-boot.bin.sd.bin
+        	cp u-boot.bin.signed u-boot.bin.sd.bin
         else
-        	display_alert  "GILLES" "fichier u-boot.bin manquant dans:" "info"
+        	display_alert  "GILLES" "fichier u-boot.bin.signed manquant dans:" "info"
         	ls -F
     	fi
 
     	# 3. Préparer le fichier u-boot.ext pour la partition FAT
     	# On le place dans le dossier de destination des fichiers de boot
-    	display_alert  "GILLES" "Copie de u-boot.bin.signed vers la destination FIP" "info"
+    	display_alert  "GILLES" "Copie de u-boot.bin.signed vers la dest. FIP en u-boot.ext" "info"
     	mkdir -p "${DEST}/boot"
     	cp u-boot.bin.signed "${DEST}/boot/u-boot.ext"
     	
     	
-     # Copie des scripts d'amorçage universels Amlogic
+    # Copie des scripts d'amorçage universels Amlogic
     # Armbian en possède souvent dans son dossier de config/bootscripts/
     if [ -f "${SRC}/config/bootscripts/boot-amlogic.cmd" ]; then
     	display_alert  "GILLES" "Copie des scripts d'amorçage universels Amlogic" "info"
