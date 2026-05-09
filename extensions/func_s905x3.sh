@@ -13,7 +13,7 @@ function fill_boot_partition() {
     	
 	# Vérifier si le répertoire existe pour éviter les erreurs
 	# mkimage de tous les fichier .cmd et copie les autres
-	if [ -d "$target_dir" ]; then
+	if [ -d "$scriptdir" ]; then
     	# Boucle sur tous les fichiers .cmd du répertoire
     		for file in "$scriptdir"/*.cmd; do
        			# Vérifier si le fichier existe réellement 
