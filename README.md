@@ -80,9 +80,21 @@ ou en specifiant les parametres sur la ligne du compile.sh
 
 6 MODIFICATION ET RELANCEMENT DE LA COMPILATION
 -------------------------------------------------------------------
+dans mon-depot: pour eviter d'entrer passkey a chaque commit:
+ssh-agent bash
+ssh-add 
+...> Enter passphrase for /home/elyobo/.ssh/id_rsa:
+
 
 apres modification dans et push vers mon-depot..
 dans repertoir build, avant de recompiler faire:
 git submodule update --remote --merge
+
+avant de compiler pour s'assurer que uboot compile
+rm output/debs/linux-u-boot-*.deb
+./compile.sh CLEAN_LEVEL="" s905x3 
+
+
+
 
 
