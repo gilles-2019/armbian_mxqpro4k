@@ -9,7 +9,7 @@ function fill_boot_partition() {
 	cp u-boot.bin.signed "${DEST}/boot/u-boot.ext"
 
 	# Chemin vers votre script personnalisé
-    	local MY_BOOT_CMD="${SRC}/userpatches/boot-amlogic.cmd"
+    	local MY_BOOT_CMD="${SRC}/userpatches/config/bootscripts/boot-amlogic.cmd"
 	# B. Génération du script d'amorce (aml_autoscript)
 	# On utilise mkimage pour convertir votre .cmd en binaire u-boot
     	if [ -f "$MY_BOOT_CMD" ]; then
@@ -21,7 +21,8 @@ function fill_boot_partition() {
 		display_alert  "GILLES" "ERR.scripts Amlogic ABSENT:$MY_BOOT_CMD" "info"
 	fi
     	# 4. Copie du DTB (Récupéré depuis cache kernel)
-	DTB_PATH="${SRC}/cache/sources/linux*/linux-${LINUX_FAMILY}/${CHIP_FAMILY}/arch/arm64/boot/dts"
+    	KERN_SRC="linux-kernel-worktree/${KERNEL_VERSION}__${LINUX_FAMILY}__${ARCH}"
+	DTB_PATH="${SRC}/cache/sources/${KERN_SRC}/arch/arm64/boot/dts"
 	
     	if [ -f "${DTB_PATH}/amlogic/meson-sm1-sei610.dtb" ]; then
         	cp "${DTB_PATH}/amlogic/*.dtb" "${DEST}/boot/dtb/amlogic/"
