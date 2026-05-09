@@ -9,18 +9,40 @@ function fill_boot_partition() {
 	cp u-boot.bin.signed "${DEST}/boot/u-boot.ext"
 
 	# Chemin vers votre script personnalisé
-    	local MY_BOOT_CMD="${SRC}/userpatches/config/bootscripts/boot-amlogic.cmd"
-	# B. Génération du script d'amorce (aml_autoscript)
-	# On utilise mkimage pour convertir votre .cmd en binaire u-boot
-    	if [ -f "$MY_BOOT_CMD" ]; then
-		display_alert  "GILLES" "Copie des scripts d'amorçage universels Amlogic" "info"
-		mkimage -A arm64 -O linux -T script -C none -a 0 -e 0 \
-		-n "autoscript" -d "$MY_BOOT_CMD" "${DEST}/boot/aml_autoscript"
-		cp "${DEST}/boot/aml_autoscript" "${DEST}/boot/s905_autoscript"
+    	local scriptdir="${SRC}/userpatches/config/bootscripts"
+    	
+	# Vérifier si le répertoire existe pour éviter les erreurs
+	# mkimage de tous les fichier .cmd et copie les autres
+	if [ -d "$target_dir" ]; then
+    	# Boucle sur tous les fichiers .cmd du répertoire
+    		for file in "$scriptdir"/*.cmd; do
+       			# Vérifier si le fichier existe réellement 
+        		[ -e "$file" ] || continue
+        		# 1. Extraire le nom de base (ex: config.cmd -> config)
+        		base_name=$(basename "$file" .cmd)
+        
+        		# 2. Définir le nom de sortie
+        		fileOut="${base_name}.scr"     
+			display_alert  "GILLES" "converti ${file} script uboot " "info"
+        		# Exécuter la fonction sur le fichier
+        		mkimage -A arm64 -O linux -T script -C none -a 0 -e 0 \
+		-n "autoscript" -d "${file}" "${DEST}/boot/${fileOut}"
+    		done
+    		# Copie tous les fichier non .cmd vers DEST
+    		for file in "$scriptdir"/*; do
+        		# Vérifier que c'est un fichier (et pas un dossier)
+        		[ -f "$file" ] || continue
+
+       			 # Si le fichier NE finit PAS par .cmd
+        		if [[ ! "$file" == *.cmd ]]; then
+            			echo "Copie de $(basename "$file") vers $DEST/boot"
+            			cp "$file" "$DEST/boot/"
+        		fi
+    		done
 	else
-		display_alert  "GILLES" "ERR.scripts Amlogic ABSENT:$MY_BOOT_CMD" "info"
+   		display_alert  "GILLES" "ERR.scripts Amlogic ABSENT:$scriptdir" "info"
 	fi
- 
+	 
 	# 1. On récupère le numero version du kernel source
 	FULL_PATH=$(ls "${SRC}/cache/sources/linux-kernel-worktree" | head -1)
 
@@ -41,7 +63,8 @@ function fill_boot_partition() {
     	else
         	display_alert "DTB introuvable dans ${DTB_PATH}/amlogic" "meson-sm1-sei610.dtb" "err"
     	fi
-    		
+    	# dtb de ophub manquant ajouter manuellement 
+    	cp "${DEST}/boot/meson-sm1-x96-max-plus-100m.dtb" "${DEST}/boot/dtb/amlogic/meson-sm1-x96-max-plus-100m.dtb"	
 	display_alert  "GILLES" "Création configuration de démarrage (extlinux.conf)" "info"
 	# C. Création du fichier de configuration de démarrage (extlinux.conf)
 	cat <<EOF > "${DEST}/boot/extlinux/extlinux.conf"
@@ -61,7 +84,7 @@ function pre_customize_image__add_chainload_files() {
 
     
     # Armbian monte la partition de boot sur $SDCARD/boot à cette étape
-    local BOOT_DIR="$SDCARD/boot"
+    local BOOT_DIR="$SDCARD"
     
     # 1. Copie du u-boot.ext (préalablement compilé et signé)
     # On le récupère là où votre premier hook l'a stocké 
