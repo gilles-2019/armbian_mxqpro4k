@@ -20,7 +20,18 @@ function fill_boot_partition() {
 	else
 		display_alert  "GILLES" "ERR.scripts Amlogic ABSENT:$MY_BOOT_CMD" "info"
 	fi
-    	# 4. Copie du DTB (Récupéré depuis cache kernel)
+ 
+	# 1. On récupère le numero version du kernel source
+	FULL_PATH=$(ls "${SRC}/cache/sources/linux-kernel-worktree" | head -1)
+
+	# 2. On extrait uniquement la version
+	if [ -n "$FULL_PATH" ]; then
+    		K_VER=$(echo "$FULL_PATH" | cut -d'_' -f1)
+    		display_alert "Version extraite : $K_VER" "DEBUG" "info"
+	else
+    		display_alert "Répertoire worktree vide" "ERROR" "err"
+	fi
+	# 4. Copie du DTB (Récupéré depuis cache kernel)
     	KERN_SRC="linux-kernel-worktree/${BRANCH}__${LINUX_FAMILY}__${ARCH}"
 	DTB_PATH="${SRC}/cache/sources/${KERN_SRC}/arch/arm64/boot/dts"
 	
