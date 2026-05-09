@@ -26,7 +26,7 @@ function fill_boot_partition() {
 			display_alert  "GILLES" "converti ${file} script uboot " "info"
         		# Exécuter la fonction sur le fichier
         		mkimage -A arm64 -O linux -T script -C none -a 0 -e 0 \
-		-n "autoscript" -d "${file}" "${DEST}/boot/${fileOut}"
+		-n "${file}" -d "${file}" "${DEST}/boot/${fileOut}"
     		done
     		# Copie tous les fichier non .cmd vers DEST
     		for file in "$scriptdir"/*; do
