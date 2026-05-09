@@ -27,12 +27,12 @@ function fill_boot_partition() {
 	# 2. On extrait uniquement la version
 	if [ -n "$FULL_PATH" ]; then
     		K_VER=$(echo "$FULL_PATH" | cut -d'_' -f1)
-    		display_alert "Version extraite : $K_VER" "DEBUG" "info"
+    		display_alert "Version extraite : <$K_VER>" "DEBUG" "info"
 	else
     		display_alert "Répertoire worktree vide" "ERROR" "err"
 	fi
 	# 4. Copie du DTB (Récupéré depuis cache kernel)
-    	KERN_SRC="linux-kernel-worktree/${BRANCH}__${LINUX_FAMILY}__${ARCH}"
+    	KERN_SRC="linux-kernel-worktree/${K_VER}__${LINUX_FAMILY}__${ARCH}"
 	DTB_PATH="${SRC}/cache/sources/${KERN_SRC}/arch/arm64/boot/dts"
 	
     	if [ -f "${DTB_PATH}/amlogic/meson-sm1-sei610.dtb" ]; then
