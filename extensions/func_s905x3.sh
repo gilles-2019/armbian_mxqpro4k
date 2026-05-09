@@ -37,7 +37,7 @@ function fill_boot_partition() {
 	
     	if [ -f "${DTB_PATH}/amlogic/meson-sm1-sei610.dtb" ]; then
     		display_alert "DTB trouver dans ${DTB_PATH}/amlogic"
-        	cp "${DTB_PATH}/amlogic/*.dtb ${DEST}/boot/dtb/amlogic/"
+        	cp "${DTB_PATH}/amlogic/"*.dtb "${DEST}/boot/dtb/amlogic/"
     	else
         	display_alert "DTB introuvable dans ${DTB_PATH}/amlogic" "meson-sm1-sei610.dtb" "err"
     	fi
