@@ -21,10 +21,11 @@ function fill_boot_partition() {
 		display_alert  "GILLES" "ERR.scripts Amlogic ABSENT:$MY_BOOT_CMD" "info"
 	fi
     	# 4. Copie du DTB (Récupéré depuis cache kernel)
-    	KERN_SRC="linux-kernel-worktree/${KERNEL_VERSION}__${LINUX_FAMILY}__${ARCH}"
+    	KERN_SRC="linux-kernel-worktree/${BRANCH}__${LINUX_FAMILY}__${ARCH}"
 	DTB_PATH="${SRC}/cache/sources/${KERN_SRC}/arch/arm64/boot/dts"
 	
     	if [ -f "${DTB_PATH}/amlogic/meson-sm1-sei610.dtb" ]; then
+    		display_alert "DTB trouver dans ${DTB_PATH}/amlogic"
         	cp "${DTB_PATH}/amlogic/*.dtb" "${DEST}/boot/dtb/amlogic/"
     	else
         	display_alert "DTB introuvable dans ${DTB_PATH}/amlogic" "meson-sm1-sei610.dtb" "err"
@@ -41,6 +42,25 @@ LABEL Armbian
 EOF
 
 }
+
+# Dans votre fichier s905x3.tvb
+
+function pre_customize_image__add_chainload_files() {
+    display_alert "GILLES" "trace dans ${FUNCNAME[0]} * copy output/boot dans $SDCARD/boot" "info"
+
+    
+    # Armbian monte la partition de boot sur $SDCARD/boot à cette étape
+    local BOOT_DIR="$SDCARD/boot"
+    
+    # 1. Copie du u-boot.ext (préalablement compilé et signé)
+    # On le récupère là où votre premier hook l'a stocké 
+    display_alert "GILLES" "fait cp -rf {DEST}/boot/ ${BOOT_DIR}" "info"
+    cp -rf "{DEST}/boot/" "${BOOT_DIR}"
+    
+}
+
+
+
 
 function post_uboot_custom_postprocess__hook_meson_sm1() {
 	display_alert "GILLES" "trace dans ${FUNCNAME[0]} *** appel fn SIGNATURE BOARD=$BOARD" "info"
