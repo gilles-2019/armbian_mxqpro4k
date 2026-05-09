@@ -65,8 +65,8 @@ function pre_customize_image__add_chainload_files() {
     
     # 1. Copie du u-boot.ext (préalablement compilé et signé)
     # On le récupère là où votre premier hook l'a stocké 
-    display_alert "GILLES" "fait cp -rf {DEST}/boot/ ${BOOT_DIR}" "info"
-    cp -rf "{DEST}/boot/" "${BOOT_DIR}"
+    display_alert "GILLES" "fait cp -rf ${DEST}/boot/ vers ${BOOT_DIR}" "info"
+    cp -rf "${DEST}/boot/" "${BOOT_DIR}"
     
 }
 
